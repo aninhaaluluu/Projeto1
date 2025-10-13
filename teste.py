@@ -7,65 +7,83 @@ nome = st.text_input("Digite o seu nome:")
 if nome:
   st.write(nome.upper())
 
-
 import streamlit as st
+from datetime import date, datetime
 
-# --- Configuração da Página ---
-st.set_page_config(page_title="Seletor de Cores", page_icon="🎨")
+st.set_page_config(page_title="Calculadora de Idade", page_icon="🎂")
 
-st.title("🎨 Visualizador de Cores Simples")
-st.markdown("Escolha uma cor e veja-a aplicada em um painel!")
+st.title("🎂 Calculadora de Idade e Aniversário")
+st.markdown("Descubra quantos anos você tem e quantos dias faltam para a próxima festa!")
 
-# --- O Widget Simples ---
-# st.color_picker é um widget visualmente muito legal
-cor_selecionada = st.color_picker("1. Escolha sua cor principal", "#3366FF") # Cor padrão: Azul Streamlit
+# --- 1. Entrada da Data de Nascimento ---
+data_nascimento = st.date_input(
+    "1. Selecione sua data de nascimento:",
+    # Define uma data de nascimento padrão razoável (20 anos atrás)
+    date(date.today().year - 20, 1, 1),
+    max_value=date.today() # Não permite datas futuras
+)
 
-# --- Visualização do Painel (O Fator Uau) ---
+# --- 2. Lógica de Cálculo ---
 
-st.subheader("2. Painel de Amostra")
+data_hoje = date.today()
 
-# 1. Crie um contêiner de colunas para o layout
-col1, col2, col3 = st.columns(3)
-
-# Cor de destaque (100% da cor escolhida)
-with col1:
-    st.markdown("Cor Principal")
-    st.markdown(
-        f"""
-        <div style="background-color: {cor_selecionada}; padding: 30px; border-radius: 5px; height: 80px;">
-        </div>
-        <p style='text-align: center; font-weight: bold;'>{cor_selecionada}</p>
-        """,
-        unsafe_allow_html=True
-    )
-
-# Cor um pouco mais escura (simplesmente preto) para contraste
-with col2:
-    st.markdown("Cor de Contraste")
-    cor_contraste = "#333333"
-    st.markdown(
-        f"""
-        <div style="background-color: {cor_contraste}; padding: 30px; border-radius: 5px; height: 80px;">
-        </div>
-        <p style='text-align: center; font-weight: bold;'>{cor_contraste}</p>
-        """,
-        unsafe_allow_html=True
-    )
+# 2.1. Calcular a Idade
+def calcular_idade(data_nasc, data_atual):
+    # Calcula a idade em anos subtraindo os anos
+    idade = data_atual.year - data_nasc.year
     
-# Cor de fundo simples (branco ou cinza claro)
-with col3:
-    st.markdown("Cor de Fundo")
-    cor_fundo = "#F0F2F6"
-    st.markdown(
-        f"""
-        <div style="background-color: {cor_fundo}; padding: 30px; border-radius: 5px; height: 80px; border: 1px solid #ccc;">
-        </div>
-        <p style='text-align: center; font-weight: bold;'>{cor_fundo}</p>
-        """,
-        unsafe_allow_html=True
-    )
+    # Ajusta se o aniversário ainda não ocorreu neste ano
+    if (data_atual.month, data_atual.day) < (data_nasc.month, data_nasc.day):
+        idade -= 1
+    return idade
 
-# --- Toque Final (Impressão) ---
+# 2.2. Calcular Dias para o Aniversário
+def dias_para_aniversario(data_nasc, data_atual):
+    # Cria a data do próximo aniversário no ano atual
+    proximo_aniv = date(data_atual.year, data_nasc.month, data_nasc.day)
+    
+    # Se o aniversário já passou este ano, muda para o próximo ano
+    if proximo_aniv < data_atual:
+        proximo_aniv = date(data_atual.year + 1, data_nasc.month, data_nasc.day)
+        
+    # Calcula a diferença de dias
+    diferenca = proximo_aniv - data_atual
+    return diferenca.days
+
+idade_atual = calcular_idade(data_nascimento, data_hoje)
+dias_restantes = dias_para_aniversario(data_nascimento, data_hoje)
+
+
+# --- 3. Visualização do Resultado ---
+
+st.subheader("2. Seus Resultados")
+
+# Exibe a idade em destaque
+st.metric(
+    label="Sua Idade Atual é:",
+    value=f"{idade_atual} anos"
+)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.info("Dia do seu próximo aniversário:")
+    # Formata a data do próximo aniversário
+    data_proximo = (data_hoje + (date.today() - data_hoje) + datetime.timedelta(days=dias_restantes)).strftime("%d de %B")
+    st.markdown(f"**{data_proximo}**")
+
+with col2:
+    st.info("Dias restantes para a festa:")
+    # Exibe a contagem de dias
+    st.markdown(f"**{dias_restantes} dias**")
+
+
+if dias_restantes == 0:
+    st.balloons()
+    st.success("🎉 FELIZ ANIVERSÁRIO! É hoje!")
+
+# --- Toque Final ---
 
 st.markdown("---")
-st.info(f"O Streamlit atualiza o painel instantaneamente toda vez que a cor muda no seletor.")
+st.caption("Esta aplicação usa a biblioteca `datetime` do Python para cálculos de data e o `st.date_input` para entrada de dados.")
+
