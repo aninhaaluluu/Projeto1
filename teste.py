@@ -8,53 +8,75 @@ if nome:
   st.write(nome.upper())
 
 import streamlit as st
-import pandas as pd 
+from datetime import date, timedelta 
+import datetime # Necessário para o timedelta
 
-st.set_page_config(page_title="Ficha Rápida de Filme", page_icon="🎬")
+st.set_page_config(page_title="Calculadora de Idade", page_icon="🎂")
 
-st.title("🎬 Ficha Rápida de Filme")
-titulo_filme = st.text_input(
-    "Digite o título do filme:", 
-    "A Origem" 
+st.title("🎂 Calculadora de Idade e Aniversário")
+st.markdown("Descubra quantos anos você tem e quantos dias faltam para a próxima festa!")
+
+# --- 1. Entrada da Data de Nascimento ---
+data_nascimento = st.date_input(
+    "1. Selecione sua data de nascimento:",
+    date(date.today().year - 20, 1, 1),
+    max_value=date.today() 
 )
 
-if titulo_filme.strip().lower() == "a origem":
-    dados_filme = {
-        "título": "A Origem (Inception)",
-        "ano": 2010,
-        "diretor": "Christopher Nolan",
-        "sinopse": "Um ladrão que rouba segredos corporativos através do uso de tecnologia de compartilhamento de sonhos.",
-        "nota_media": 8.8,
-        "url_poster": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwMjg1MTc0Mw@@._V1_.jpg"
-    }
-elif titulo_filme.strip().lower() == "o poderoso chefão":
-     dados_filme = {
-        "título": "O Poderoso Chefão (The Godfather)",
-        "ano": 1972,
-        "diretor": "Francis Ford Coppola",
-        "sinopse": "O patriarca de uma dinastia do crime organizado transfere o controle de seu império clandestino para seu filho relutante.",
-        "nota_media": 9.2,
-        "url_poster": "https://m.media-amazon.com/images/M/MV5BM2MyNjY2OTUtYjQ3OS00NjkxLWJmNWMtYzcyZThjYzk2MzllXkEyXkFqcGdeQXVyMjUzOTY1NTc@._V1_.jpg"
-    }
-else:
-    dados_filme = None
-    st.warning(f"Filme '{titulo_filme}' não encontrado. Tente 'A Origem'.")
+# --- Variáveis de Data ---
+data_hoje = date.today()
 
-if dados_filme:
-    st.header(dados_filme["título"])
+# 2.1. Calcular a Idade
+def calcular_idade(data_nasc, data_atual):
+    idade = data_atual.year - data_nasc.year
+    if (data_atual.month, data_atual.day) < (data_nasc.month, data_nasc.day):
+        idade -= 1
+    return idade
+
+# 2.2. Calcular Dias para o Aniversário
+def dias_para_aniversario(data_nasc, data_atual):
+    # Cria a data do próximo aniversário no ano atual
+    proximo_aniv = date(data_atual.year, data_nasc.month, data_nasc.day)
     
-    col1, col2 = st.columns([1, 2])
-    
-    with col1:
-        st.image(dados_filme["url_poster"], caption="Pôster")
+    # Se o aniversário já passou este ano, muda para o próximo ano
+    if proximo_aniv < data_atual:
+        proximo_aniv = date(data_atual.year + 1, data_nasc.month, data_nasc.day)
         
-    with col2:
-        st.metric(label="Nota Média", value=dados_filme["nota_media"])
-        st.info(f"Ano: {dados_filme['ano']}")
-        st.info(f"Diretor: {dados_filme['diretor']}")
+    diferenca = proximo_aniv - data_atual
+    return diferenca.days
 
-    st.subheader("Sinopse")
-    st.markdown(dados_filme["sinopse"])
+idade_atual = calcular_idade(data_nascimento, data_hoje)
+dias_restantes = dias_para_aniversario(data_nascimento, data_hoje)
 
-st.caption("Para rodar: `streamlit run filme_simples.py`")
+# --- 3. Visualização do Resultado ---
 
+st.subheader("2. Seus Resultados")
+
+# Exibe a idade em destaque
+st.metric(
+    label="Sua Idade Atual é:",
+    value=f"{idade_atual} anos"
+)
+
+col1, col2 = st.columns(2)
+
+# --- LINHA CORRIGIDA: Usa a data de hoje + timedelta ---
+data_proximo_obj = data_hoje + timedelta(days=dias_restantes)
+data_proximo_formatada = data_proximo_obj.strftime("%d de %B")
+
+
+with col1:
+    st.info("Dia do seu próximo aniversário:")
+    st.markdown(f"**{data_proximo_formatada}**")
+
+with col2:
+    st.info("Dias restantes para a festa:")
+    st.markdown(f"**{dias_restantes} dias**")
+
+
+if dias_restantes == 0:
+    st.balloons()
+    st.success("🎉 FELIZ ANIVERSÁRIO! É hoje!")
+
+st.markdown("---")
+st.caption("Esta aplicação usa a biblioteca `datetime` do Python para cálculos de data e o `st.date_input` para entrada de dados.")
