@@ -17,11 +17,9 @@ st.header("Se está em dúvida, deixe o código decidir!")
 # --- Defina as opções de forma simples ---
 opcoes = [
     "✅ Sim, com certeza!",
-    "❌ Não, nem pensar.",
-    "🤔 Talvez, tente novamente.",
-    "⭐ Melhor esperar mais um pouco.",
-    "🚀 Vá em frente!",
-    "😴 Durma sobre o assunto."
+    "❌ Não, nem pensar!!!",
+    "⭐ Melhor esperar mais um pouco. Amadureça essa ideia",
+    "😴 Esqueça esse assunto... Não pense mais sobre isso."
 ]
 
 # --- O Botão Mágico ---
@@ -41,4 +39,4 @@ if st.button("Clique para receber sua DECISÃO!"):
     st.balloons()
 
 # --- Toque Final (Explicação Simples) ---
-st.caption(f"Psst... O programa tem {len(opcoes)} opções e escolheu uma delas de forma totalmente aleatória. Simples e funcional!")
+st.caption(f"Psst... O programa tem {len(opcoes)} opções e escolheu uma delas de forma totalmente aleatória!!!!! ;)")
