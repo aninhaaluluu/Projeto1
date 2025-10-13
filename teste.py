@@ -8,8 +8,7 @@ if nome:
   st.write(nome.upper())
 
 import streamlit as st
-from datetime import date, timedelta 
-import datetime # Necessário para o timedelta
+from datetime import date, timedelta
 
 st.set_page_config(page_title="Calculadora de Idade", page_icon="🎂")
 
@@ -60,10 +59,9 @@ st.metric(
 
 col1, col2 = st.columns(2)
 
-# --- LINHA CORRIGIDA: Usa a data de hoje + timedelta ---
+# O objeto timedelta é usado aqui
 data_proximo_obj = data_hoje + timedelta(days=dias_restantes)
 data_proximo_formatada = data_proximo_obj.strftime("%d de %B")
-
 
 with col1:
     st.info("Dia do seu próximo aniversário:")
@@ -72,7 +70,6 @@ with col1:
 with col2:
     st.info("Dias restantes para a festa:")
     st.markdown(f"**{dias_restantes} dias**")
-
 
 if dias_restantes == 0:
     st.balloons()
