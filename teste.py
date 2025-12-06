@@ -20,17 +20,22 @@ def processar_dados_crimes(df):
     crimes_dict = {}
     
     for idx, row in df.iterrows():
-        # Lidar com valores NaN
-        artigo_base = row.get('Artigo_Base', '') if pd.notna(row.get('Artigo_Base')) else ''
-        artigo_completo = row.get('Artigo_Completo', '') if pd.notna(row.get('Artigo_Completo')) else artigo_base
-        descricao = row.get('Descricao_Crime', '') if pd.notna(row.get('Descricao_Crime')) else ''
+        # ... (seu código anterior)
         
         # Correção de tipo: Garantir que valores e unidades são lidos corretamente, com defaults
         try:
             pena_min_valor = float(row.get('Pena_Minima_Valor', 0))
-            pena_min_unidade = row.get('Pena_Minima_Unidade', 'mês').lower()
+            
+            # --- CORREÇÃO AQUI: Garante que a unidade é uma string ---
+            pena_min_unidade = str(row.get('Pena_Minima_Unidade', 'mês')).lower()
+            # ------------------------------------------------------
+            
             pena_max_valor = float(row.get('Pena_Maxima_Valor', 0))
-            pena_max_unidade = row.get('Pena_Maxima_Unidade', 'mês').lower()
+            
+            # --- CORREÇÃO AQUI: Garante que a unidade é uma string ---
+            pena_max_unidade = str(row.get('Pena_Maxima_Unidade', 'mês')).lower()
+            # ------------------------------------------------------
+
         except ValueError:
             # Pular linhas com dados inválidos
             continue
