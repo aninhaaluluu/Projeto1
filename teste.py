@@ -24,36 +24,39 @@ def processar_dados_crimes(df):
     
     for idx, row in df.iterrows():
         
-        # 1. DEFINIÇÃO DAS VARIÁVEIS DE TEXTO (para resolver "artigo_completo is not defined")
+        # 1. DEFINIÇÃO DAS VARIÁVEIS DE TEXTO
+        # Uso de .get e pd.notna para robustez
         artigo_base = row.get('Artigo_Base', '') if pd.notna(row.get('Artigo_Base')) else ''
-        artigo_completo = row.get('Artigo_Completo', '') if pd.notna(row.get('Artigo_Completo')) else artigo_base
+        # Assume Artigo_Completo é igual a Artigo_Base se estiver NaN
+        artigo_completo = row.get('Artigo_Completo', artigo_base) if pd.notna(row.get('Artigo_Completo')) else artigo_base
         descricao = row.get('Descricao_Crime', '') if pd.notna(row.get('Descricao_Crime')) else ''
         tipo_penal = row.get('Tipo_Penal_Estrutural', 'Crime Base (Caput)') if pd.notna(row.get('Tipo_Penal_Estrutural')) else 'Crime Base (Caput)'
         
         # Inicializa variáveis para evitar erros
-        pena_min_anos = 0
-        pena_max_anos = 0
-        pena_min_valor = 0
-        pena_max_valor = 0
-        pena_min_unidade = 'ano'
-        pena_max_unidade = 'ano'
+        pena_min_anos = 0.0
+        pena_max_anos = 0.0
+        pena_min_valor = 0.0
+        pena_max_valor = 0.0
         
         # 2. DEFINIÇÃO E TRATAMENTO DE VALORES NUMÉRICOS E UNIDADES
         try:
-            # Garante que o valor é um float
-            pena_min_valor = float(row.get('Pena_Minima_Valor', 0))
-            pena_max_valor = float(row.get('Pena_Maxima_Valor', 0))
+            # Tenta converter os valores numéricos. Usa 0.0 se for NaN ou se a conversão falhar
+            pena_min_valor = float(row.get('Pena_Minima_Valor', 0.0))
+            pena_max_valor = float(row.get('Pena_Maxima_Valor', 0.0))
             
-            # Garante que a unidade é uma string antes de chamar .lower() (CORREÇÃO DO ERRO 'float' object)
-            pena_min_unidade = str(row.get('Pena_Minima_Unidade', 'mês')).lower()
-            pena_max_unidade = str(row.get('Pena_Maxima_Unidade', 'mês')).lower()
+            # Garante que a unidade é uma string e minúscula. Usa 'mês' como padrão.
+            pena_min_unidade = str(row.get('Pena_Minima_Unidade', 'mês')).lower().strip()
+            pena_max_unidade = str(row.get('Pena_Maxima_Unidade', 'mês')).lower().strip()
 
-        except ValueError:
-            # Se a conversão numérica falhar (dados sujos), pula esta linha
+        except Exception as e:
+            # Erros de conversão são capturados aqui (como texto onde esperava número)
+            # st.warning(f"Erro de conversão na linha {idx}: {e}") # Descomentar para debug
             continue
 
         # 3. CONVERSÃO PARA ANOS
         def converter_para_anos(valor, unidade):
+            if not isinstance(valor, (int, float)):
+                return 0.0
             if unidade == 'mês':
                 return valor / 12
             elif unidade == 'dia':
@@ -64,12 +67,12 @@ def processar_dados_crimes(df):
         pena_min_anos = converter_para_anos(pena_min_valor, pena_min_unidade)
         pena_max_anos = converter_para_anos(pena_max_valor, pena_max_unidade)
         
-        # Garante que o mínimo não é maior que o máximo
-        if pena_min_anos > pena_max_anos:
-             pena_min_anos = 0 
+        # Garante que o mínimo não é maior que o máximo e que não são negativos
+        if pena_min_anos < 0 or pena_max_anos < 0 or pena_min_anos > pena_max_anos:
+             pena_min_anos, pena_max_anos = 0.0, 0.0
             
         # 4. CRIAÇÃO DA CHAVE E DADOS (Só se tiver artigo e descrição)
-        if artigo_completo and descricao:
+        if artigo_completo and descricao and pena_max_anos > 0:
             chave = f"Art. {artigo_completo} - {descricao[:80]}{'...' if len(descricao) > 80 else ''}"
             
             crimes_dict[chave] = {
@@ -88,35 +91,59 @@ def processar_dados_crimes(df):
     return crimes_dict
 
 # --- Carregar dados DIRETAMENTE DA URL ---
-df = pd.DataFrame()
+# Usamos o parâmetro 'version' para forçar o Streamlit a RECARREGAR o CSV quando o número mudar.
+# Altere este número ('1') para forçar a limpeza do cache após cada edição no CSV.
+@st.cache_data
+def carregar_dados_da_url(url, version='1'): # <<<<<<< CORREÇÃO DO CACHE: Adicionei 'version'
+    st.info(f"⏳ Tentando carregar dados do CSV com versão: {version}")
+    
+    codificacoes = ['utf-8', 'latin-1', 'iso-8859-1', 'cp1252', 'utf-8-sig']
+    delimitadores = [',', ';'] # <<<<<<< CORREÇÃO DA LEITURA: Tenta o delimitador padrão e o usado no Brasil
+    
+    for encoding in codificacoes:
+        for sep in delimitadores:
+            try:
+                # Tenta carregar o arquivo com a combinação de codificação e delimitador
+                df = pd.read_csv(url, encoding=encoding, sep=sep)
+                st.success(f"✅ Dados carregados com sucesso! (Codificação: {encoding}, Delimitador: '{sep}')")
+                return df
+            except Exception:
+                continue
+    
+    return pd.DataFrame() # Retorna um DataFrame vazio se falhar
+
+# --- CHAME A FUNÇÃO AGORA COM O NOVO PARÂMETRO ---
+# Altere o número da 'version' (ex: '1' -> '2') sempre que você alterar o CSV no GitHub.
+df = carregar_dados_da_url(CSV_URL, version='1') # Mantenha em '1' ou mude para '2' se tiver editado o CSV.
+
 crimes_data = {}
 carregamento_sucesso = False
 
-try:
-    codificacoes = ['utf-8', 'latin-1', 'iso-8859-1', 'cp1252', 'utf-8-sig']
-    
-    for encoding in codificacoes:
-        try:
-            # Tenta carregar o arquivo
-            df = pd.read_csv(CSV_URL, encoding=encoding, sep=',')
-            st.success(f"✅ Dados carregados com sucesso! (Codificação: {encoding})")
-            carregamento_sucesso = True
-            break
-        except Exception:
-            continue
-    
-    if carregamento_sucesso:
-        crimes_data = processar_dados_crimes(df)
-        if not crimes_data:
-            st.error("❌ Os dados foram carregados, mas não foi possível processar nenhum crime. Verifique se o formato das colunas está correto.")
-            carregamento_sucesso = False
+if not df.empty:
+    crimes_data = processar_dados_crimes(df)
+    if crimes_data:
+        carregamento_sucesso = True
+    else:
+        st.error("❌ Os dados foram carregados, mas não foi possível processar nenhum crime. Verifique se o formato das colunas está correto.")
 
-except Exception as e:
-    # Este erro só será exibido se o carregamento do CSV falhar completamente
-    st.error(f"❌ Erro ao carregar arquivo da URL: {e}")
-    carregamento_sucesso = False
+if not carregamento_sucesso:
+    st.error("❌ Erro ao carregar ou processar arquivo da URL. Verifique a URL e a formatação do CSV.")
+    st.warning("""
+    **⚠️ Aguardando carregamento do dataset**
+    
+    Para usar o simulador:
+    1. Certifique-se que o arquivo `crimes_cp_final_sem_art68.csv` está na URL correta.
+    2. **Tente alterar o parâmetro `version` na linha de chamada (`version='1'`) para forçar o recarregamento do cache.**
+    """)
+    st.stop()
 
-# --- Fim do Carregamento ---
+
+# VARIÁVEIS DE CÁLCULO INICIAL (definidas após o carregamento)
+crime_selecionado = list(crimes_data.keys())[0]
+min_pena = 0
+max_pena = 0
+
+# (RESTANTE DO CÓDIGO PERMANECE O MESMO)
 
 # Sidebar
 st.sidebar.header("💡 Sobre")
@@ -136,13 +163,7 @@ if busca and crimes_data:
 
 # Se não há dados carregados, mostrar mensagem
 if not crimes_data or not carregamento_sucesso:
-    st.warning("""
-    **⚠️ Aguardando carregamento do dataset**
-    
-    Para usar o simulador:
-    1. Certifique-se que o arquivo `crimes_cp_final_sem_art68.csv` está na raiz do seu repositório GitHub.
-    2. Verifique se as colunas estão no formato correto.
-    """)
+    # A mensagem de erro anterior já foi mostrada. Apenas stop.
     st.stop()
 
 # VARIÁVEIS DE CÁLCULO INICIAL (definidas após o carregamento)
@@ -163,6 +184,11 @@ with col1:
     min_pena = crime_info['pena_min'] # Limite Mínimo Legal (em anos)
     max_pena = crime_info['pena_max'] # Limite Máximo Legal (em anos)
     
+    # ⚠️ TRATAMENTO PARA ERRO NAN: Se min_pena ou max_pena for 0.0, significa que deu erro na conversão.
+    if min_pena == 0.0 and max_pena == 0.0:
+        st.error("⚠️ Erro de dados: A pena não pôde ser calculada. Verifique os campos de pena no CSV para este crime.")
+        st.stop()
+        
     st.write(f"**Artigo:** {crime_info['artigo']}")
     st.write(f"**Tipo penal:** {crime_info['tipo_penal']}")
     st.write(f"**Descrição:** {crime_info['descricao_completa']}")
@@ -483,11 +509,11 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
     if not reincidente:
         condicoes.append("✅ Réu não reincidente")
     else:
-        if crime_violento:
+        if not crime_violento:
+             condicoes.append("⚠️ Réu reincidente: Juiz pode analisar aplicação excepcional (Art. 44, §3º) - Crime sem violência")
+        else:
              condicoes.append("❌ Réu reincidente e crime violento")
              pode_substituir = False
-        else:
-             condicoes.append("⚠️ Réu reincidente: Juiz pode analisar aplicação excepcional (Art. 44, §3º)")
     
     # Condição III: Análise do Art. 59
     if circunstancia == 0:
@@ -709,7 +735,3 @@ with tab4:
         - **60%** se crime hediondo/equiparado e resultar em morte, se primário.
         - **70%** se crime hediondo/equiparado e resultar em morte, se reincidente.
     """)
-
-st.markdown("---")
-st.write("**⚖️ Ferramenta educacional - Consulte sempre a legislação atual e um profissional do direito**")
-st.write("**📚 Base legal:** Arts. 33, 43-48, 59, 61, 65, 68 do Código Penal Brasileiro e Lei nº 7.210/84 (LEP)")
