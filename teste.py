@@ -22,54 +22,83 @@ def processar_dados_crimes(df):
         
     crimes_dict = {}
     
+    # DEBUG: Mostra o total de linhas no CSV
+    st.sidebar.write(f"🔍 Total de linhas no CSV: {len(df)}")
+    
+    # Contador de crimes processados vs pulados
+    processados = 0
+    pulados = 0
+    
     for idx, row in df.iterrows():
         
-        # 1. DEFINIÇÃO DAS VARIÁVEIS DE TEXTO (para resolver "artigo_completo is not defined")
+        # 1. DEFINIÇÃO DAS VARIÁVEIS DE TEXTO
         artigo_base = row.get('Artigo_Base', '') if pd.notna(row.get('Artigo_Base')) else ''
         artigo_completo = row.get('Artigo_Completo', '') if pd.notna(row.get('Artigo_Completo')) else artigo_base
         descricao = row.get('Descricao_Crime', '') if pd.notna(row.get('Descricao_Crime')) else ''
         tipo_penal = row.get('Tipo_Penal_Estrutural', 'Crime Base (Caput)') if pd.notna(row.get('Tipo_Penal_Estrutural')) else 'Crime Base (Caput)'
         
-        # Inicializa variáveis para evitar erros
-        pena_min_anos = 0
-        pena_max_anos = 0
-        pena_min_valor = 0
-        pena_max_valor = 0
-        pena_min_unidade = 'ano'
-        pena_max_unidade = 'ano'
-        
-        # 2. DEFINIÇÃO E TRATAMENTO DE VALORES NUMÉRICOS E UNIDADES
+        # 2. TRATAMENTO DE VALORES NUMÉRICOS E UNIDADES
         try:
-            # Garante que o valor é um float
-            pena_min_valor = float(row.get('Pena_Minima_Valor', 0))
-            pena_max_valor = float(row.get('Pena_Maxima_Valor', 0))
+            # Obtém os valores
+            pena_min_valor_raw = row.get('Pena_Minima_Valor')
+            pena_max_valor_raw = row.get('Pena_Maxima_Valor')
             
-            # Garante que a unidade é uma string antes de chamar .lower() (CORREÇÃO DO ERRO 'float' object)
-            pena_min_unidade = str(row.get('Pena_Minima_Unidade', 'mês')).lower()
-            pena_max_unidade = str(row.get('Pena_Maxima_Unidade', 'mês')).lower()
+            # DEBUG para Art. 206
+            if 'Art. 206' in str(artigo_completo):
+                st.sidebar.write(f"⚠️ **Art. 206 encontrado!**")
+                st.sidebar.write(f"   - Min: {pena_min_valor_raw} / Max: {pena_max_valor_raw}")
+            
+            # Verifica se AMBOS os valores são válidos (não NaN e não vazios)
+            if pd.isna(pena_min_valor_raw) or pd.isna(pena_max_valor_raw):
+                pulados += 1
+                continue  # PULA CRIMES SEM PENA DEFINIDA
+            
+            # Converte para float
+            pena_min_valor = float(pena_min_valor_raw)
+            pena_max_valor = float(pena_max_valor_raw)
+            
+            # Se os valores são zero ou negativos, pula
+            if pena_min_valor <= 0 or pena_max_valor <= 0:
+                pulados += 1
+                continue
+            
+            # Obtém as unidades (com fallback para 'mês')
+            pena_min_unidade_raw = row.get('Pena_Minima_Unidade', 'mês')
+            pena_max_unidade_raw = row.get('Pena_Maxima_Unidade', 'mês')
+            
+            # Se as unidades estão vazias ou NaN, assume 'mês'
+            pena_min_unidade = str(pena_min_unidade_raw).lower().strip() if pd.notna(pena_min_unidade_raw) else 'mês'
+            pena_max_unidade = str(pena_max_unidade_raw).lower().strip() if pd.notna(pena_max_unidade_raw) else 'mês'
+            
+            # Se ficou 'nan', corrige para 'mês'
+            if pena_min_unidade == 'nan':
+                pena_min_unidade = 'mês'
+            if pena_max_unidade == 'nan':
+                pena_max_unidade = 'mês'
 
-        except ValueError:
-            # Se a conversão numérica falhar (dados sujos), pula esta linha
+        except (ValueError, TypeError) as e:
+            pulados += 1
             continue
 
         # 3. CONVERSÃO PARA ANOS
         def converter_para_anos(valor, unidade):
-            if unidade == 'mês':
+            unidade_limpa = unidade.replace('ê', 'e').strip()
+            if 'mes' in unidade_limpa or 'mês' in unidade:
                 return valor / 12
-            elif unidade == 'dia':
-                return valor / 360  # 360 dias por ano
-            else: # Anos, ano, etc.
+            elif 'dia' in unidade_limpa:
+                return valor / 360
+            else:  # Anos
                 return valor
 
         pena_min_anos = converter_para_anos(pena_min_valor, pena_min_unidade)
         pena_max_anos = converter_para_anos(pena_max_valor, pena_max_unidade)
         
-        # Garante que o mínimo não é maior que o máximo
+        # Validação: mínimo não pode ser maior que máximo
         if pena_min_anos > pena_max_anos:
-             pena_min_anos = 0 
+            pena_min_anos, pena_max_anos = pena_max_anos, pena_min_anos
             
-        # 4. CRIAÇÃO DA CHAVE E DADOS (Só se tiver artigo e descrição)
-        if artigo_completo and descricao:
+        # 4. CRIAÇÃO DA CHAVE E DADOS
+        if artigo_completo and descricao and pena_min_anos > 0 and pena_max_anos > 0:
             chave = f"Art. {artigo_completo} - {descricao[:80]}{'...' if len(descricao) > 80 else ''}"
             
             crimes_dict[chave] = {
@@ -82,42 +111,17 @@ def processar_dados_crimes(df):
                 'pena_min_original': pena_min_valor,
                 'pena_max_original': pena_max_valor,
                 'unidade_original_min': pena_min_unidade,
-                'unidade_original_max': pena_max_unidade
+                'unidade_original_max': pena_max_unidade,
+                'tipo_pena': row.get('Tipo_Pena', 'Reclusão')
             }
+            processados += 1
+        else:
+            pulados += 1
+    
+    st.sidebar.write(f"✅ Processados: {processados}")
+    st.sidebar.write(f"⏭️ Pulados: {pulados}")
     
     return crimes_dict
-
-# --- Carregar dados DIRETAMENTE DA URL ---
-df = pd.DataFrame()
-crimes_data = {}
-carregamento_sucesso = False
-
-try:
-    codificacoes = ['utf-8', 'latin-1', 'iso-8859-1', 'cp1252', 'utf-8-sig']
-    
-    for encoding in codificacoes:
-        try:
-            # Tenta carregar o arquivo
-            df = pd.read_csv(CSV_URL, encoding=encoding, sep=',')
-            st.success(f"✅ Dados carregados com sucesso! (Codificação: {encoding})")
-            carregamento_sucesso = True
-            break
-        except Exception:
-            continue
-    
-    if carregamento_sucesso:
-        crimes_data = processar_dados_crimes(df)
-        if not crimes_data:
-            st.error("❌ Os dados foram carregados, mas não foi possível processar nenhum crime. Verifique se o formato das colunas está correto.")
-            carregamento_sucesso = False
-
-except Exception as e:
-    # Este erro só será exibido se o carregamento do CSV falhar completamente
-    st.error(f"❌ Erro ao carregar arquivo da URL: {e}")
-    carregamento_sucesso = False
-
-# --- Fim do Carregamento ---
-
 # Sidebar
 st.sidebar.header("💡 Sobre")
 st.sidebar.write("**Base Legal:** Art. 68 do Código Penal - Fases: 1.Pena base 2.Atenuantes/Agravantes 3.Majorantes/Minorantes 4.Cálculo 5.Regime 6.Substituição")
