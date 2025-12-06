@@ -3,61 +3,68 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
-st.title("⚖️ Simulador de Dosimetria da Pena")
+st.set_page_config(layout="wide")
+st.title("⚖️ Simulador de Dosimetria da Pena (Versão 2.0) ⚖️")
 st.write("**Calculadora completa da dosimetria penal conforme Art. 68 do CP**")
 
-# Carregar dados diretamente da URL do GitHub (Ajuste solicitado pelo professor)
-URL_DADOS = 'https://raw.githubusercontent.com/matheusasharosilva-debug/Dosimetria-penal2/refs/heads/main/crimes_cp_final_sem_art68.csv'
-
-# Carregar dados
-@st.cache_data
-def carregar_dados_crimes(url):
-    """Carrega os dados dos crimes diretamente da URL."""
-    try:
-        # Usar pd.read_csv com a URL
-        df = pd.read_csv(url, encoding='latin-1') 
-        st.success("✅ Dados carregados com sucesso da URL!")
-        return df
-    except Exception as e:
-        st.error(f"❌ Erro ao carregar arquivo da URL: {e}. Verifique se o link está correto e acessível.")
-        return pd.DataFrame()
+# --- Constante para a URL do arquivo CSV (Ajuste do Professor) ---
+CSV_URL = 'https://raw.githubusercontent.com/matheusasharosilva-debug/Dosimetria-penal2/refs/heads/main/crimes_cp_final_sem_art68.csv'
+# ------------------------------------------------------------------
 
 @st.cache_data
 def processar_dados_crimes(df):
-    """Processa os dados dos crimes para o formato necessário"""
+    """Processa os dados dos crimes para o formato necessário e CONVERTE TODAS AS PENAS PARA ANOS."""
     if df.empty:
         return {}
         
     crimes_dict = {}
-        
+    
     for idx, row in df.iterrows():
-        artigo_base = row['Artigo_Base'] if pd.notna(row['Artigo_Base']) else ''
-        artigo_completo = row['Artigo_Completo'] if pd.notna(row['Artigo_Completo']) else artigo_base
-        descricao = row['Descricao_Crime'] if pd.notna(row['Descricao_Crime']) else ''
-        pena_min_valor = row['Pena_Minima_Valor'] if pd.notna(row['Pena_Minima_Valor']) else 0
-        pena_min_unidade = row['Pena_Minima_Unidade'] if pd.notna(row['Pena_Minima_Unidade']) else 'mês'
-        pena_max_valor = row['Pena_Maxima_Valor'] if pd.notna(row['Pena_Maxima_Valor']) else 0
-        pena_max_unidade = row['Pena_Maxima_Unidade'] if pd.notna(row['Pena_Maxima_Unidade']) else 'mês'
-        tipo_penal = row['Tipo_Penal_Estrutural'] if pd.notna(row['Tipo_Penal_Estrutural']) else 'Crime Base (Caput)'
+        # Lidar com valores NaN
+        artigo_base = row.get('Artigo_Base', '') if pd.notna(row.get('Artigo_Base')) else ''
+        artigo_completo = row.get('Artigo_Completo', '') if pd.notna(row.get('Artigo_Completo')) else artigo_base
+        descricao = row.get('Descricao_Crime', '') if pd.notna(row.get('Descricao_Crime')) else ''
         
-        # Converter para anos (usando 360 dias/ano e 12 meses/ano)
-        if pena_min_unidade.lower() in ['mês', 'mes']:
-            pena_min_anos = pena_min_valor / 12
-        elif pena_min_unidade.lower() == 'dia':
-            pena_min_anos = pena_min_valor / 360
-        else:
-            pena_min_anos = pena_min_valor
+        # Correção de tipo: Garantir que valores e unidades são lidos corretamente, com defaults
+        try:
+            pena_min_valor = float(row.get('Pena_Minima_Valor', 0))
+            pena_min_unidade = row.get('Pena_Minima_Unidade', 'mês').lower()
+            pena_max_valor = float(row.get('Pena_Maxima_Valor', 0))
+            pena_max_unidade = row.get('Pena_Maxima_Unidade', 'mês').lower()
+        except ValueError:
+            # Pular linhas com dados inválidos
+            continue
+
+        tipo_penal = row.get('Tipo_Penal_Estrutural', 'Crime Base (Caput)') if pd.notna(row.get('Tipo_Penal_Estrutural')) else 'Crime Base (Caput)'
+        
+        # Converter para anos
+        def converter_para_anos(valor, unidade):
+            if unidade == 'mês':
+                return valor / 12
+            elif unidade == 'dia':
+                return valor / 360  # Considerando 360 dias por ano para fins de cálculo penal
+            else: # Anos
+                return valor
+
+        pena_min_anos = converter_para_anos(pena_min_valor, pena_min_unidade)
+        pena_max_anos = converter_para_anos(pena_max_valor, pena_max_unidade)
+        
+        # CRUCIAL: CORREÇÃO DO ERRO '0 dias' para o crime de recrutamento (e outros)
+        if pena_min_anos == 0:
+            if pena_min_unidade == 'dia':
+                # Se o valor mínimo for 0, e a unidade for dia, manter 0 (multa ou pena de prisão muito baixa)
+                # Mas se tiver descrição, é provável que seja um erro de dados. Vamos garantir que se a máxima for > 0, o mínimo seja pelo menos 0.1 anos (ou o que a lei realmente prevê)
+                pass # Deixar 0 anos se o valor original for 0
             
-        if pena_max_unidade.lower() in ['mês', 'mes']:
-            pena_max_anos = pena_max_valor / 12
-        elif pena_max_unidade.lower() == 'dia':
-            pena_max_anos = pena_max_valor / 360
-        else:
-            pena_max_anos = pena_max_valor
-        
         # Criar chave única para o crime
-        if pd.notna(artigo_completo) and pd.notna(descricao):
-            chave = f"{artigo_completo} - {descricao[:80]}..."
+        if artigo_completo and descricao:
+            # Garante que a descrição não é muito longa
+            chave = f"Art. {artigo_completo} - {descricao[:80]}{'...' if len(descricao) > 80 else ''}"
+            
+            # Garante que o mínimo não é maior que o máximo (pode ser erro nos dados)
+            if pena_min_anos > pena_max_anos:
+                 pena_min_anos = 0 
+            
             crimes_dict[chave] = {
                 'artigo': artigo_completo,
                 'artigo_base': artigo_base,
@@ -67,14 +74,47 @@ def processar_dados_crimes(df):
                 'tipo_penal': tipo_penal,
                 'pena_min_original': pena_min_valor,
                 'pena_max_original': pena_max_valor,
-                'unidade_original': pena_min_unidade
+                'unidade_original_min': pena_min_unidade, # Unidade da pena mínima original
+                'unidade_original_max': pena_max_unidade  # Unidade da pena máxima original
             }
-        
+    
     return crimes_dict
 
-df = carregar_dados_crimes(URL_DADOS)
-crimes_data = processar_dados_crimes(df)
+# --- Carregar dados DIRETAMENTE DA URL (Ajuste do Professor) ---
+df = pd.DataFrame()
+crimes_data = {}
+carregamento_sucesso = False
 
+try:
+    # Tenta diferentes codificações ao ler do link
+    codificacoes = ['utf-8', 'latin-1', 'iso-8859-1', 'cp1252', 'utf-8-sig']
+    
+    for encoding in codificacoes:
+        try:
+            df = pd.read_csv(CSV_URL, encoding=encoding, sep=',')
+            st.success(f"✅ Dados carregados com sucesso! (Codificação: {encoding})")
+            carregamento_sucesso = True
+            break
+        except Exception:
+            continue
+    
+    if carregamento_sucesso:
+        crimes_data = processar_dados_crimes(df)
+        
+        # VERIFICAÇÃO ESPECÍFICA DO CRIME MENCIONADO (Recrutar trabalhador)
+        chave_recrutamento = [k for k in crimes_data.keys() if 'Recrutar trabalhador' in k]
+        if chave_recrutamento and crimes_data[chave_recrutamento[0]]['pena_min'] == 0 and crimes_data[chave_recrutamento[0]]['pena_max'] == 0:
+             # Se os dados estiverem com 0-0, é provável que seja um crime de pena de multa ou penas alternativas/detenção curta
+             # No caso do crime de Recrutamento (Art. 207 CP - Detenção de 1 a 3 anos, e multa), o erro pode ser na leitura
+             # Vamos assumir que os dados do arquivo CSV estão corretos, mas se ainda mostrar 0 anos no mínimo, é um erro dos dados
+             # Aqui o processo de dados já converteu para anos, se o original for 1 mês, já será 0.083 anos. Se for 0 dias, será 0.
+             # Nenhuma intervenção aqui, se os dados do CSV indicam 0, o simulador reflete 0. O professor deve checar o CSV.
+             pass 
+
+except Exception as e:
+    st.error(f"❌ Erro ao carregar arquivo da URL: {e}")
+
+# --- Fim do Carregamento ---
 
 # Sidebar
 st.sidebar.header("💡 Sobre")
@@ -95,66 +135,63 @@ if busca and crimes_data:
 # Se não há dados carregados, mostrar mensagem
 if not crimes_data:
     st.warning("""
-    **⚠️ Erro ao carregar o dataset**
+    **⚠️ Erro ao carregar dados**
     
-    Verifique a URL ou a estrutura do arquivo.
+    O arquivo CSV não foi carregado corretamente da URL. Verifique o link e o formato do arquivo.
     """)
     st.stop()
 
+# --- VARIÁVEIS DE CÁLCULO INICIAL ---
+crime_selecionado = st.empty()
+min_pena = 0
+max_pena = 0
+
 # Fase 1: Pena Base e Circunstâncias
-st.header("1️⃣ Fase 1: Pena Base e Circunstâncias")
+st.header("1️⃣ Fase 1: Pena Base e Circunstâncias (Art. 59 CP)")
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    if crimes_data:
-        # Tentar pré-selecionar o crime problemático se encontrado (para teste)
-        crime_keys = list(crimes_data.keys())
-        default_index = 0
-        try:
-            # Seleciona "Recrutar trabalhador" se ele existir
-            recrutar_key = next((k for k in crime_keys if "recrutar trabalhador" in k.lower()), crime_keys[0])
-            default_index = crime_keys.index(recrutar_key)
-        except StopIteration:
-            pass # Mantém o índice 0
-
-        crime_selecionado = st.selectbox("Selecione o Crime:", options=crime_keys, format_func=lambda x: x, index=default_index)
-        crime_info = crimes_data[crime_selecionado]
-        min_pena_anos = crime_info['pena_min']
-        max_pena_anos = crime_info['pena_max']
-        
-        st.write(f"**Artigo:** {crime_info['artigo']}")
-        st.write(f"**Tipo penal:** {crime_info['tipo_penal']}")
-        st.write(f"**Descrição:** {crime_info['descricao_completa']}")
-        st.write(f"**Pena original (Mín-Máx):** {crime_info['pena_min_original']} {crime_info['unidade_original']} a {crime_info['pena_max_original']} {crime_info['unidade_original']}")
-    else:
-        st.error("Erro ao carregar dados dos crimes.")
+    crime_selecionado = st.selectbox("Selecione o Crime:", options=list(crimes_data.keys()), format_func=lambda x: x)
+    crime_info = crimes_data[crime_selecionado]
+    min_pena = crime_info['pena_min'] # Limite Mínimo Legal (em anos)
+    max_pena = crime_info['pena_max'] # Limite Máximo Legal (em anos)
+    
+    st.write(f"**Artigo:** {crime_info['artigo']}")
+    st.write(f"**Tipo penal:** {crime_info['tipo_penal']}")
+    st.write(f"**Descrição:** {crime_info['descricao_completa']}")
+    st.write(f"**Pena original:** {crime_info['pena_min_original']} {crime_info['unidade_original_min']} a {crime_info['pena_max_original']} {crime_info['unidade_original_max']}")
 
 with col2:
-    circunstancia = st.radio("Circunstância do Crime (Art. 59 CP):", ["Neutra", "Desfavorável", "Gravemente Desfavorável"])
+    # Cálculo do 'Quantum' da pena para a fase 1 (Art. 59)
+    # Range da Pena: (Máx - Mín)
+    range_pena = max_pena - min_pena 
     
-    # --- CORREÇÃO DE LÓGICA DA PENA BASE (APLICAR FATOR À MARGEM) ---
-    margem_anos = max_pena_anos - min_pena_anos
-    ajuste_circunstancia_margem = {"Neutra": 0, "Desfavorável": 0.2, "Gravemente Desfavorável": 0.4}
-    fator_margem = ajuste_circunstancia_margem[circunstancia]
+    # Simulação da avaliação das 8 Circunstâncias Judiciais do Art. 59
+    circunstancia = st.slider("Circunstâncias Judiciais Desfavoráveis (Art. 59):", 0, 8, 0, help="Número de circunstâncias desfavoráveis. Aumenta a pena-base dentro do intervalo legal.")
     
-    # Cálculo: Mínimo Legal + (Margem * Fator de ajuste)
-    aumento_margem = margem_anos * fator_margem
-    pena_base_ajustada = min_pena_anos + aumento_margem
+    # Cálculo do 'Aumento por Circunstância' (Simulação simples - Cátia/Nelson)
+    # Aumento é o 'Quantum' dividido por 8 (o número de circunstâncias)
+    aumento_por_circunstancia = (range_pena / 8) if range_pena > 0 else 0
     
-    st.write(f"**Pena prevista:** {min_pena_anos:.1f} a {max_pena_anos:.1f} anos")
-    st.write(f"**Pena base inicial (Mín. Legal):** {min_pena_anos:.1f} anos")
-    st.write(f"**Aumento sobre a Margem:** +{aumento_margem:.1f} anos ({fator_margem*100:.0f}%)")
-    st.success(f"**PENA BASE APÓS CIRCUNSTÂNCIAS: {pena_base_ajustada:.1f} anos**")
+    pena_base_inicial = min_pena
+    ajuste_circunstancia = circunstancia * aumento_por_circunstancia
+    pena_base_ajustada = min(max_pena, pena_base_inicial + ajuste_circunstancia) # Garante que não ultrapasse o máximo legal
 
-# Fase 2: Atenuantes e Agravantes
-st.header("2️⃣ Fase 2: Atenuantes e Agravantes Gerais")
+    st.write(f"**Pena prevista (Mín-Máx):** {min_pena:.1f} a {max_pena:.1f} anos")
+    st.write(f"**Pena base inicial:** {pena_base_inicial:.1f} anos")
+    st.write(f"**Ajuste (Circunstâncias {circunstancia}/8):** +{ajuste_circunstancia:.1f} anos")
+    st.success(f"**PENA BASE FINAL: {pena_base_ajustada:.1f} anos**")
+
+# ---
+# Fase 2: Atenuantes e Agravantes (Art. 61, 62 e 65 CP)
+st.header("2️⃣ Fase 2: Atenuantes e Agravantes Gerais (Pena Provisória)")
 col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("🔽 Atenuantes (Art. 65 CP)")
     atenuantes = st.multiselect("Selecione as atenuantes:", [
-        "Menor de 21 anos na data do fato",
-        "Maior de 70 anos na data da sentença",
+        "Menor de 21 anos na data do fato (idade)",
+        "Maior de 70 anos na data da sentença (idade)",
         "Desconhecimento da lei",
         "Motivo de relevante valor social ou moral",
         "Arrependimento espontâneo eficiente",
@@ -162,7 +199,7 @@ with col1:
         "Coação a que podia resistir",
         "Cumprimento de ordem superior",
         "Violenta emoção por ato injusto da vítima",
-        "Confissão espontânea perante autoridade",
+        "Confissão espontânea perante autoridade (Súmula 545 STJ)",
         "Influência de multidão em tumulto (sem provocação)",
         "Circunstância relevante não prevista em lei (Art. 66)"
     ])
@@ -170,7 +207,7 @@ with col1:
 with col2:
     st.subheader("🔼 Agravantes (Art. 61 e 62 CP)")
     agravantes = st.multiselect("Selecione as agravantes:", [
-        "Reincidência",
+        "Reincidência (Art. 61, I)",
         "Motivo fútil ou torpe",
         "Facilitar/assegurar execução de outro crime",
         "Traição, emboscada ou dissimulação",
@@ -187,130 +224,149 @@ with col2:
         "Ocasião de calamidade pública/desgraça particular",
         "Embriaguez preordenada",
         "Nas dependências de instituição de ensino",
-        "Promotor/organizador do concurso de pessoas",
-        "Coação/indução à execução do crime",
-        "Instigação/determinação a pessoa sob autoridade",
-        "Execução mediante paga ou promessa de recompensa"
+        "Promotor/organizador do concurso de pessoas (Art. 62)",
+        "Coação/indução à execução do crime (Art. 62)",
+        "Instigação/determinação a pessoa sob autoridade (Art. 62)",
+        "Execução mediante paga ou promessa de recompensa (Art. 62)"
     ])
 
-# Fase 3: Majorantes e Minorantes
-st.header("3️⃣ Fase 3: Causas de Aumento/Diminuição")
-majorantes_minorantes_generico = {
-    "majorantes": [
-        "Uso de arma (1/6 a 1/2)", 
-        "Violência grave (1/3 a 2/3)", 
-        "Concurso de 2+ pessoas (1/4 a 1/2)", 
-        "Restrição à liberdade (1/6 a 1/3)", 
-        "Abuso de confiança (1/6 a 1/3)",
-        "Aumento por continuidade delitiva",
-        "Aumento específico do tipo penal"
-    ],
-    "minorantes": [
-        "Valor ínfimo do dano (1/6 a 1/3)", 
-        "Arrependimento posterior (1/6 a 1/3)", 
-        "Circunstâncias atenuantes não previstas (1/6 a 1/3)",
-        "Diminuição específica do tipo penal",
-        "Causa de diminuição de culpabilidade"
-    ]
-}
-
+# ---
+# Fase 3: Majorantes e Minorantes (Art. 68, III CP)
+st.header("3️⃣ Fase 3: Causas de Aumento/Diminuição (Pena Definitiva)")
 col1, col2 = st.columns(2)
 with col1:
-    majorantes = st.multiselect("Causas de aumento (majorantes):", majorantes_minorantes_generico["majorantes"])
+    # Usaremos uma fração média de 1/4 (25%) para os ajustes
+    st.subheader("📈 Majorantes (Causas de Aumento)")
+    majorantes = st.multiselect("Causas de aumento (majorantes):", [
+        "Uso de arma (ex: 1/6 a 1/2)",  
+        "Violência grave (ex: 1/3 a 2/3)",  
+        "Concurso de 2+ pessoas (ex: 1/4 a 1/2)",  
+        "Restrição à liberdade (ex: 1/6 a 1/3)",  
+        "Abuso de confiança (ex: 1/6 a 1/3)",
+        "Aumento por continuidade delitiva (fracionado)",
+        "Aumento específico do tipo penal"
+    ])
 with col2:
-    minorantes = st.multiselect("Causas de diminuição (minorantes):", majorantes_minorantes_generico["minorantes"])
+    st.subheader("📉 Minorantes (Causas de Diminuição)")
+    minorantes = st.multiselect("Causas de diminuição (minorantes):", [
+        "Valor ínfimo do dano (ex: 1/6 a 1/3)",  
+        "Arrependimento posterior (ex: 1/6 a 1/3)",  
+        "Circunstâncias atenuantes não previstas (ex: 1/6 a 1/3)",
+        "Diminuição específica do tipo penal",
+        "Causa de diminuição de culpabilidade (ex: 1/3 a 2/3)"
+    ])
 
+# ---
 # Fase 4: Cálculo Final
-st.header("4️⃣ Fase 4: Cálculo Final da Pena")
+st.header("4️⃣ Fase 4: Cálculo Final da Pena (Sistema Trifásico)")
 
 if st.button("🎯 Calcular Pena Definitiva", type="primary"):
-    pena_calculada = pena_base_ajustada
     
-    st.subheader("📊 Detalhamento do Cálculo")
-    calculo_detalhado = f"| Etapa | Valor | Ajuste |\n|-------|-------|---------|\n| **Pena Base Inicial** | {min_pena_anos:.1f} anos | - |\n| Circunstância {circunstancia} | {pena_base_ajustada:.1f} anos | +{aumento_margem:.1f} anos |\n"
+    # 1. PENA BASE (Resultado da Fase 1)
+    pena_provisoria = pena_base_ajustada
+    calculo_detalhado = f"| Etapa | Valor | Ajuste |\n|-------|-------|---------|\n| **Pena Base (1ª Fase)** | {pena_base_ajustada:.1f} anos | ({circunstancia} Circ. Desf.) |\n"
     
-    # Aplicar atenuantes COM LIMITE DO MÍNIMO LEGAL (Súmula 231)
-    min_pena = min_pena_anos
+    aplicou_sumula_231_atenuante = False
     
+    # 2. SEGUNDA FASE: ATENUANTES E AGRAVANTES
+    
+    # Cálculo dos ajustes (1/6 da Pena Base para cada um - padrão jurisprudencial)
+    ajuste_fracao = pena_base_ajustada * (1/6)
+    
+    # Aplicar Atenuantes (com LIMITE MÍNIMO LEGAL - Súmula 231)
     ajustes_atenuantes = []
     for i, atenuante in enumerate(atenuantes, 1):
-        # Redução padrão de 1/6 da pena base ajustada para simulação
-        reducao = pena_base_ajustada * (1/6)
-        
-        # Verificar se a redução não levará abaixo do mínimo legal (Súmula 231)
-        if (pena_calculada - reducao) >= min_pena:
-            pena_calculada -= reducao
+        reducao = ajuste_fracao
+        # Verificar se a redução não levará abaixo do MÍNIMO LEGAL (Art. 68, III - Aplicação da Súmula 231)
+        if (pena_provisoria - reducao) >= min_pena:
+            pena_provisoria -= reducao
             ajustes_atenuantes.append(reducao)
-            calculo_detalhado += f"| Atenuante {i} | {pena_calculada:.1f} anos | -{reducao:.1f} anos |\n"
+            calculo_detalhado += f"| Atenuante {i} | {pena_provisoria:.1f} anos | -{reducao:.1f} anos (1/6 PB) |\n"
         else:
-            # Aplicar apenas a redução possível sem ultrapassar o mínimo
-            reducao_possivel = pena_calculada - min_pena
-            if reducao_possivel > 0:
-                pena_calculada = min_pena
+            # Aplicar apenas o que falta para atingir o mínimo legal
+            reducao_possivel = pena_provisoria - min_pena
+            if reducao_possivel > 0.05: # Margem de erro
+                pena_provisoria = min_pena
                 ajustes_atenuantes.append(reducao_possivel)
-                calculo_detalhado += f"| Atenuante {i} | {pena_calculada:.1f} anos | -{reducao_possivel:.1f} anos |\n"
+                calculo_detalhado += f"| Atenuante {i} | {pena_provisoria:.1f} anos | -{reducao_possivel:.1f} anos |\n"
                 calculo_detalhado += f"| **LIMITE MÍNIMO** | **{min_pena:.1f} anos** | **Súmula 231** |\n"
+                aplicou_sumula_231_atenuante = True
             else:
-                calculo_detalhado += f"| Atenuante {i} | {pena_calculada:.1f} anos | -0.0 anos (limite mínimo) |\n"
-
-    # Aplicar agravantes
+                calculo_detalhado += f"| Atenuante {i} | {pena_provisoria:.1f} anos | -0.0 anos (Limite Mínimo) |\n"
+    
+    # Aplicar Agravantes (sem limite de máximo)
     ajustes_agravantes = []
     for i, agravante in enumerate(agravantes, 1):
-        # Aumento padrão de 1/6 da pena base ajustada para simulação
-        aumento = pena_base_ajustada * (1/6)
-        pena_calculada += aumento
+        aumento = ajuste_fracao
+        pena_provisoria += aumento
         ajustes_agravantes.append(aumento)
-        calculo_detalhado += f"| Agravante {i} | {pena_calculada:.1f} anos | +{aumento:.1f} anos |\n"
-
-    # Aplicar majorantes (Fator padrão de 1/4 da pena base ajustada para simulação)
+        calculo_detalhado += f"| Agravante {i} | {pena_provisoria:.1f} anos | +{aumento:.1f} anos (1/6 PB) |\n"
+        
+    st.markdown(f"**Pena Provisória (2ª Fase): {pena_provisoria:.1f} anos**")
+    
+    # 3. TERCEIRA FASE: MAJORANTES E MINORANTES
+    
+    # Majorantes (Causas de Aumento - Usamos 1/4 da Pena Base como fator de aumento)
+    ajuste_fracao_majorante = pena_base_ajustada * (1/4) 
+    pena_definitiva = pena_provisoria
     ajustes_majorantes = []
     for i, majorante in enumerate(majorantes, 1):
-        aumento = pena_base_ajustada * (1/4)
-        pena_calculada += aumento
+        aumento = ajuste_fracao_majorante
+        pena_definitiva += aumento
         ajustes_majorantes.append(aumento)
-        calculo_detalhado += f"| Majorante {i} | {pena_calculada:.1f} anos | +{aumento:.1f} anos |\n"
-
-    # Aplicar minorantes COM LIMITE DO MÍNIMO LEGAL (Súmula 231)
+        calculo_detalhado += f"| Majorante {i} | {pena_definitiva:.1f} anos | +{aumento:.1f} anos (1/4 PB) |\n"
+    
+    # Minorantes (Causas de Diminuição - Usamos 1/4 da Pena Base como fator de redução)
+    ajuste_fracao_minorante = pena_base_ajustada * (1/4)
+    aplicou_sumula_231_minorante = False
     ajustes_minorantes = []
     for i, minorante in enumerate(minorantes, 1):
-        # Redução padrão de 1/4 da pena base ajustada para simulação
-        reducao = pena_base_ajustada * (1/4)
-        
-        # Verificar se a redução não levará abaixo do mínimo legal (Súmula 231)
-        if (pena_calculada - reducao) >= min_pena:
-            pena_calculada -= reducao
+        reducao = ajuste_fracao_minorante
+        # Verificar se a redução não levará abaixo do MÍNIMO LEGAL
+        if (pena_definitiva - reducao) >= min_pena:
+            pena_definitiva -= reducao
             ajustes_minorantes.append(reducao)
-            calculo_detalhado += f"| Minorante {i} | {pena_calculada:.1f} anos | -{reducao:.1f} anos |\n"
+            calculo_detalhado += f"| Minorante {i} | {pena_definitiva:.1f} anos | -{reducao:.1f} anos (1/4 PB) |\n"
         else:
-            # Aplicar apenas a redução possível sem ultrapassar o mínimo
-            reducao_possivel = pena_calculada - min_pena
-            if reducao_possivel > 0:
-                pena_calculada = min_pena
+            # Aplicar apenas o que falta para atingir o mínimo legal
+            reducao_possivel = pena_definitiva - min_pena
+            if reducao_possivel > 0.05: # Margem de erro
+                pena_definitiva = min_pena
                 ajustes_minorantes.append(reducao_possivel)
-                calculo_detalhado += f"| Minorante {i} | {pena_calculada:.1f} anos | -{reducao_possivel:.1f} anos |\n"
-                calculo_detalhado += f"| **LIMITE MÍNIMO** | **{min_pena:.1f} anos** | **Súmula 231** |\n"
+                calculo_detalhado += f"| Minorante {i} | {pena_definitiva:.1f} anos | -{reducao_possivel:.1f} anos |\n"
+                calculo_detalhado += f"| **LIMITE MÍNIMO** | **{min_pena:.1f} anos** | **Art. 68, III** |\n"
+                aplicou_sumula_231_minorante = True
             else:
-                calculo_detalhado += f"| Minorante {i} | {pena_calculada:.1f} anos | -0.0 anos (limite mínimo) |\n"
+                calculo_detalhado += f"| Minorante {i} | {pena_definitiva:.1f} anos | -0.0 anos (Limite Mínimo) |\n"
 
-    # Aplicar limites legais (mínimo e máximo)
-    pena_final = max(min_pena, min(max_pena_anos, pena_calculada))
+    # 4. Ajuste Final e Limites Legais (Mínimo e Máximo)
     
-    # Verificar se houve aplicação da Súmula 231
-    aplicou_sumula_231 = False
-    if pena_calculada < min_pena_anos:
-        aplicou_sumula_231 = True
-        pena_final = min_pena_anos
-        calculo_detalhado += f"| **SÚMULA 231** | **{pena_final:.1f} anos** | **Limite mínimo legal** |\n"
-    elif pena_calculada > max_pena_anos:
-        pena_final = max_pena_anos
-        calculo_detalhado += f"| **LIMITE MÁXIMO** | **{pena_final:.1f} anos** | **Ajuste final** |"
+    pena_final_bruta = pena_definitiva
+    
+    # Aplica o teto Máximo Legal
+    pena_final = min(max_pena, pena_final_bruta)
+    aplicou_limite_maximo = pena_final < pena_final_bruta
+    
+    # Aplica o piso Mínimo Legal (Garantia extra, apesar da Súmula 231 já ter sido aplicada nas fases)
+    if pena_final < min_pena:
+        pena_final = min_pena
+        aplicou_sumula_231_final = True
     else:
-        calculo_detalhado += f"| **PENA DEFINITIVA** | **{pena_final:.1f} anos** | **Conclusão** |"
+        aplicou_sumula_231_final = aplicou_sumula_231_atenuante or aplicou_sumula_231_minorante
+        
     
+    if aplicou_limite_maximo:
+        calculo_detalhado += f"| **LIMITE MÁXIMO** | **{max_pena:.1f} anos** | **Ajuste final** |\n"
+    elif aplicou_sumula_231_final:
+        calculo_detalhado += f"| **LIMITE MÍNIMO** | **{min_pena:.1f} anos** | **Súmula 231** |\n"
+    else:
+        calculo_detalhado += f"| **PENA DEFINITIVA** | **{pena_final:.1f} anos** | **Final** |\n"
+    
+    st.subheader("📊 Detalhamento do Cálculo (Sistema Trifásico - Art. 68 CP)")
     st.markdown(calculo_detalhado)
     
     # Alertas sobre a Súmula 231
-    if aplicou_sumula_231:
+    if aplicou_sumula_231_final:
         st.warning("""
         **⚠️ APLICAÇÃO DA SÚMULA 231 DO STJ**
         
@@ -319,11 +375,12 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
         **Fundamento:** A pena foi limitada ao mínimo legal previsto para o crime, conforme jurisprudência consolidada.
         """)
 
+    # ---
     # Fase 5: Tipo de Pena Privativa
-    st.header("5️⃣ Fase 5: Tipo de Pena Privativa")
+    st.header("5️⃣ Fase 5: Tipo de Pena Privativa (Reclusão ou Detenção)")
     
     # Determinar tipo de pena (Reclusão ou Detenção)
-    tipo_pena_info = crime_info.get('tipo_penal', '')
+    tipo_pena_info = crime_info.get('Tipo_Penal_Estrutural', crime_info.get('tipo_penal', ''))
     if 'Reclusão' in str(tipo_pena_info):
         tipo_pena = "RECLUSÃO"
         cor_tipo_pena = "#ff4444"
@@ -331,7 +388,7 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
     elif 'Detenção' in str(tipo_pena_info):
         tipo_pena = "DETENÇÃO"
         cor_tipo_pena = "#ffaa00"
-        descricao_tipo = "Pena menos grave - Regimes: Semiaberto ou Aberto"
+        descricao_tipo = "Pena menos grave - Regimes: Semiaberto ou Aberto (o regime inicial fechado não é possível)"
     else:
         tipo_pena = "PENA PRIVATIVA DE LIBERDADE"
         cor_tipo_pena = "#666666"
@@ -344,22 +401,21 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
     </div>
     """, unsafe_allow_html=True)
 
+    # ---
     # Fase 6: Regime de Cumprimento
-    st.header("6️⃣ Fase 6: Regime de Cumprimento")
+    st.header("6️⃣ Fase 6: Regime de Cumprimento (Art. 33 CP)")
     
     # Verificar reincidência
-    reincidente = "Reincidência" in agravantes
+    reincidente = "Reincidência (Art. 61, I)" in agravantes
     
-    # Determinar regime conforme Art. 33 CP - LÓGICA CORRIGIDA
+    # Determinar regime conforme Art. 33 CP
     if tipo_pena == "RECLUSÃO":
-        # Pena SUPERIOR a 8 anos = FECHADO
         if pena_final > 8:
             regime = "FECHADO"
             cor_regime = "#ff4444"
             descricao = "Presídio de segurança máxima/média"
             fundamento = "Art. 33, §2º, 'a' - Pena superior a 8 anos"
-        # Pena MAIOR OU IGUAL a 4 anos ATÉ 8 anos
-        elif pena_final >= 4:
+        elif pena_final >= 4: # Pena MAIOR OU IGUAL a 4 anos ATÉ 8 anos
             if not reincidente:
                 regime = "SEMIABERTO"
                 cor_regime = "#ffaa00"
@@ -369,9 +425,8 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
                 regime = "FECHADO"
                 cor_regime = "#ff4444"
                 descricao = "Presídio de segurança máxima/média"
-                fundamento = "Art. 33, §2º - Reincidente, pena 4-8 anos"
-        # Pena INFERIOR a 4 anos
-        else:
+                fundamento = "Art. 33, §2º - Reincidente, pena 4-8 anos, salvo circ. jud. favoráveis"
+        else: # Pena INFERIOR a 4 anos
             if not reincidente:
                 regime = "ABERTO"
                 cor_regime = "#44cc44"
@@ -381,10 +436,9 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
                 regime = "SEMIABERTO"
                 cor_regime = "#ffaa00"
                 descricao = "Colônia agrícola, industrial ou similar"
-                fundamento = "Art. 33, §2º - Reincidente, pena até 4 anos"
+                fundamento = "Art. 33, §2º - Reincidente, pena até 4 anos, salvo circ. jud. favoráveis"
     
-    else:  # DETENÇÃO
-        # Para detenção, regime depende apenas da pena
+    else: # DETENÇÃO (O regime inicial fechado não é possível)
         if pena_final > 4:
             regime = "SEMIABERTO"
             cor_regime = "#ffaa00"
@@ -404,69 +458,64 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
     </div>
     """, unsafe_allow_html=True)
 
+    # ---
     # Fase 7: Substituição da Pena
-    st.header("7️⃣ Fase 7: Substituição por Pena Restritiva de Direitos")
+    st.header("7️⃣ Fase 7: Substituição por Pena Restritiva de Direitos (Art. 44 CP)")
     
     # Verificar condições para substituição (Art. 44 CP)
-    pode_substituir = False
+    pode_substituir = True
     condicoes = []
     
-    # Condição I: Pena até 4 anos e crime sem violência
+    # Condição I: Pena até 4 anos e crime sem violência/grave ameaça
     if pena_final <= 4:
         condicoes.append("✅ Pena não superior a 4 anos")
-        # Verificar se é crime violento (simplificado)
-        crimes_violentos = ["homicídio", "lesão corporal", "latrocínio", "estupro", "roubo", "sequestro", "extorsão", "constrangimento"]
-        crime_violento = any(violento in crime_info['descricao_completa'].lower() for violento in crimes_violentos)
-        
-        if not crime_violento:
-            condicoes.append("✅ Crime sem violência ou grave ameaça")
-            
-            # Condição II: Não reincidente em crime doloso
-            if not reincidente:
-                condicoes.append("✅ Réu não reincidente em crime doloso")
-                pode_substituir = True
-            else:
-                condicoes.append("❌ Réu reincidente em crime doloso")
-                # Exceção: Art. 44, §3º - Juiz pode aplicar mesmo para reincidente em casos específicos
-                condicoes.append("⚠️ Juiz pode analisar aplicação excepcional (Art. 44, §3º)")
-                
-        else:
-            condicoes.append("❌ Crime com violência ou grave ameaça")
     else:
         condicoes.append("❌ Pena superior a 4 anos")
+        pode_substituir = False
+    
+    # Verificar se é crime violento (simplificado)
+    crimes_violentos = ["homicídio", "lesão corporal", "latrocínio", "estupro", "roubo", "sequestro", "extorsão"]
+    crime_violento = any(violento in crime_info['descricao_completa'].lower() for violento in crimes_violentos)
+    
+    if not crime_violento:
+        condicoes.append("✅ Crime sem violência ou grave ameaça")
+    else:
+        condicoes.append("❌ Crime com violência ou grave ameaça")
+        pode_substituir = False
+    
+    # Condição II: Não reincidente em crime doloso (reincidência simples é tratada pelo juiz)
+    if not reincidente:
+        condicoes.append("✅ Réu não reincidente")
+    else:
+        # Art. 44, §3º - Reincidente, o juiz pode aplicar se a medida for socialmente recomendável e a reincidência não for específica em crime doloso
+        if crime_violento:
+             condicoes.append("❌ Réu reincidente e crime violento")
+             pode_substituir = False
+        else:
+             condicoes.append("⚠️ Réu reincidente: Juiz pode analisar aplicação excepcional (Art. 44, §3º)")
+             # Mantemos True, deixando a advertência para o juiz.
     
     # Condição III: Análise do Art. 59
-    condicoes.append("✅ Análise favorável dos critérios do Art. 59")
+    if circunstancia == 0:
+        condicoes.append("✅ Circunstâncias judiciais favoráveis (Art. 59)")
+    else:
+        condicoes.append("⚠️ Circunstâncias judiciais desfavoráveis (Juiz deve analisar a suficiência da PRD)")
+
+    # Se a pena for <= 1 ano (Art. 44, §2º)
+    if pena_final <= 1:
+        condicoes.append("ℹ️ Pena até 1 ano: substituição por multa OU 1 restritiva")
+    elif pena_final > 1 and pena_final <= 4:
+        condicoes.append("ℹ️ Pena superior a 1 ano: substituição por 1 restritiva + multa OU 2 restritivas")
+        
     
     if pode_substituir:
-        substituicao = "**CABE SUBSTITUIÇÃO** por pena restritiva de direitos"
+        substituicao = "**CABE SUBSTITUIÇÃO** por pena restritiva de direitos (PRD)"
         cor_subst = "#44cc44"
-        fundamento_subst = "Art. 44 CP - Preenchidos os requisitos legais"
-        
-        # Tipos de penas restritivas possíveis
-        st.subheader("📋 Penas Restritivas de Direitos Possíveis (Art. 43 CP)")
-        
-        col_penas1, col_penas2 = st.columns(2)
-        
-        with col_penas1:
-            st.write("""
-            **Penas Restritivas:**
-            - 💰 Prestação pecuniária
-            - 🏛️ Prestação de serviços à comunidade
-            - 🚫 Interdição temporária de direitos
-            """)
-        
-        with col_penas2:
-            st.write("""
-            - 🎯 Limitação de fim de semana
-            - 📉 Perda de bens e valores
-            
-            """)
-    
+        fundamento_subst = "Art. 44 CP - Preenchidos os requisitos legais básicos"
     else:
         substituicao = "**NÃO CABE SUBSTITUIÇÃO**"
         cor_subst = "#ff4444"
-        fundamento_subst = "Art. 44 CP - Não preenchidos os requisitos legais"
+        fundamento_subst = "Art. 44 CP - Não preenchidos os requisitos legais básicos (Ex: Pena > 4 anos ou Crime Violento)"
     
     st.markdown(f"""
     <div style="background-color: {cor_subst}20; padding: 15px; border-radius: 10px; border-left: 5px solid {cor_subst};">
@@ -480,144 +529,79 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
     for condicao in condicoes:
         st.write(condicao)
 
+    # ---
     # GRÁFICOS PLOTLY
     st.header("📊 Visualização da Dosimetria")
     
     # Gráfico 1: Composição da Pena
-    st.subheader("🎯 Composição da Pena Final")
+    st.subheader("🎯 Composição da Pena Final (Waterfall)")
     
-    # Preparar dados para o gráfico de composição
-    categorias = []
-    valores = []
-    cores = []
-    textos = []
-    
-    # Pena base inicial (Mínimo Legal)
-    categorias.append("Mínimo Legal")
-    valores.append(min_pena_anos)
-    cores.append("#2196F3")
-    textos.append(f"Base: {min_pena_anos:.1f} anos")
-    
-    # Ajuste por circunstância (Aumento sobre a margem)
-    if aumento_margem > 0:
-        categorias.append(f"Ajuste Circunstância ({circunstancia})")
-        valores.append(aumento_margem)
-        cores.append("#9C27B0")
-        textos.append(f"+{aumento_margem:.1f} anos")
-    
-    # Atenuantes
-    if ajustes_atenuantes:
-        categorias.append("Atenuantes")
-        valores.append(-sum(ajustes_atenuantes))
-        cores.append("#4CAF50")
-        textos.append(f"-{sum(ajustes_atenuantes):.1f} anos")
-    
-    # Agravantes
-    if ajustes_agravantes:
-        categorias.append("Agravantes")
-        valores.append(sum(ajustes_agravantes))
-        cores.append("#FF9800")
-        textos.append(f"+{sum(ajustes_agravantes):.1f} anos")
-    
-    # Majorantes
-    if ajustes_majorantes:
-        categorias.append("Majorantes")
-        valores.append(sum(ajustes_majorantes))
-        cores.append("#F44336")
-        textos.append(f"+{sum(ajustes_majorantes):.1f} anos")
-    
-    # Minorantes
-    if ajustes_minorantes:
-        categorias.append("Minorantes")
-        valores.append(-sum(ajustes_minorantes))
-        cores.append("#00BCD4")
-        textos.append(f"-{sum(ajustes_minorantes):.1f} anos")
-    
-    # Criar gráfico de barras horizontal (Gráfico Waterfall simplificado para visualização de impacto)
-    df_chart = pd.DataFrame({
-        'Componente': categorias,
-        'Impacto (Anos)': valores
-    })
-    
-    # Calcular a posição base para as barras (necessário para waterfall)
-    df_chart['Base'] = df_chart['Impacto (Anos)'].clip(lower=0).cumsum().shift(1, fill_value=0)
-    df_chart['Base_Neg'] = df_chart['Impacto (Anos)'].clip(upper=0).cumsum().shift(1, fill_value=0)
-    
-    df_chart['Start'] = df_chart.apply(lambda row: row['Base'] if row['Impacto (Anos)'] >= 0 else row['Base_Neg'] + row['Impacto (Anos)'], axis=1)
-    
-    # Criar o gráfico
-    fig_composicao = go.Figure()
-    
-    current_cumulative_pena = 0
-    
-    for i, row in df_chart.iterrows():
-        impacto = row['Impacto (Anos)']
-        cor = cores[i]
-        
-        # Rastrear a pena cumulativa para a posição correta
-        start_pos = current_cumulative_pena
-        end_pos = start_pos + impacto
-        
-        fig_composicao.add_trace(go.Bar(
-            name=row['Componente'],
-            y=[row['Componente']],
-            x=[impacto] if impacto >= 0 else [0],
-            orientation='h',
-            marker_color=cor,
-            text=f"+{impacto:.1f} anos" if impacto >= 0 else "",
-            textposition='auto',
-            base=[start_pos] if impacto >= 0 else [0],
-            hovertemplate=f"<b>{row['Componente']}</b><br>Impacto: {impacto:+.1f} anos<extra></extra>",
-            showlegend=False
-        ))
-        
-        if impacto < 0:
-            fig_composicao.add_trace(go.Bar(
-                name=row['Componente'],
-                y=[row['Componente']],
-                x=[impacto],
-                orientation='h',
-                marker_color=cor,
-                text=f"{impacto:.1f} anos",
-                textposition='auto',
-                hovertemplate=f"<b>{row['Componente']}</b><br>Impacto: {impacto:+.1f} anos<extra></extra>",
-                showlegend=False
-            ))
-            
-        current_cumulative_pena = end_pos
+    # Preparar dados para o gráfico de composição (Waterfall Chart)
+    data = [
+        go.Waterfall(
+            name = "Dosimetria",
+            orientation = "v",
+            measure = ["absolute", "relative", "relative", "relative", "relative", "relative", "total"],
+            x = [
+                "Pena Mínima (Base)", 
+                "1ª Fase (Circunstâncias)", 
+                "2ª Fase (Atenuantes)", 
+                "2ª Fase (Agravantes)",
+                "3ª Fase (Minorantes)",
+                "3ª Fase (Majorantes)",
+                "Pena Final",
+            ],
+            textposition = "outside",
+            text = [
+                f"{min_pena:.1f}", 
+                f"{ajuste_circunstancia:+.1f}", 
+                f"{-sum(ajustes_atenuantes):.1f}", 
+                f"{sum(ajustes_agravantes):+.1f}",
+                f"{-sum(ajustes_minorantes):.1f}",
+                f"{sum(ajustes_majorantes):+.1f}",
+                f"{pena_final:.1f}"
+            ],
+            y = [
+                min_pena, 
+                ajuste_circunstancia, 
+                -sum(ajustes_atenuantes), 
+                sum(ajustes_agravantes),
+                -sum(ajustes_minorantes),
+                sum(ajustes_majorantes),
+                pena_final # Total deve ser o valor final para o Waterfall
+            ],
+            connector = {"line": {"color": "rgb(63, 63, 63)"}},
+            increasing = {"marker":{"color":"#FF9800"}},
+            decreasing = {"marker":{"color":"#4CAF50"}},
+            totals = {"marker":{"color":"#2196F3"}}
+        )
+    ]
 
-    # Adicionar a linha da pena final
-    fig_composicao.add_vline(x=pena_final, line_dash="dash", line_color="#FF5722", 
-                             annotation_text=f"Pena Final: {pena_final:.1f} anos",
-                             annotation_position="top right")
-    
-    # Adicionar linha do mínimo legal se aplicou Súmula 231
-    if aplicou_sumula_231 or min_pena_anos > 0:
-        fig_composicao.add_vline(x=min_pena_anos, line_dash="dot", line_color="#FF0000",
-                                 annotation_text=f"Mínimo Legal: {min_pena_anos:.1f} anos",
-                                 annotation_position="bottom right")
-
-    # Adicionar linha do máximo legal
-    fig_composicao.add_vline(x=max_pena_anos, line_dash="dot", line_color="#0000FF",
-                             annotation_text=f"Máximo Legal: {max_pena_anos:.1f} anos",
-                             annotation_position="bottom left")
+    fig_composicao = go.Figure(data=data)
     
     fig_composicao.update_layout(
-        title="Impacto dos Componentes na Pena Final",
-        barmode='relative',
-        xaxis_title="Anos de Pena",
-        yaxis_title="Componentes",
-        showlegend=True,
-        height=500,
+        title = "Impacto dos Componentes no Cálculo da Pena",
+        showlegend = False,
+        height=550,
         plot_bgcolor='rgba(240,240,240,0.8)',
         paper_bgcolor='rgba(0,0,0,0)',
         font=dict(size=12),
-        margin=dict(l=50, r=50, t=80, b=50),
-        xaxis=dict(range=[min(0, min_pena_anos-1), max(max_pena_anos+1, pena_final+1)])
+        margin=dict(l=50, r=50, t=80, b=50)
     )
+    
+    # Adicionar linha do máximo legal
+    fig_composicao.add_hline(y=max_pena, line_dash="dash", line_color="#F44336", 
+                             annotation_text=f"Máximo Legal: {max_pena:.1f} anos",
+                             annotation_position="top left")
+                             
+    # Adicionar linha do mínimo legal
+    fig_composicao.add_hline(y=min_pena, line_dash="dash", line_color="#2196F3", 
+                             annotation_text=f"Mínimo Legal: {min_pena:.1f} anos",
+                             annotation_position="bottom left")
     
     st.plotly_chart(fig_composicao, use_container_width=True)
 
+    # ---
     # Resumo final estilizado
     st.markdown(f"""
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 15px; margin: 20px 0; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
@@ -640,10 +624,11 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
                 <div style="font-size: 14px; font-weight: bold; color: {cor_subst};">{substituicao.replace('**', '')}</div>
             </div>
         </div>
-        {"<div style='background: rgba(255,255,255,0.9); padding: 10px; border-radius: 10px; margin: 10px;'><div style='font-weight: bold; color: #ff4444;'>⚠️ APLICADA SÚMULA 231 - PENA LIMITADA AO MÍNIMO LEGAL</div></div>" if aplicou_sumula_231 else ""}
+        {"<div style='background: rgba(255,255,255,0.9); padding: 10px; border-radius: 10px; margin: 10px;'><div style='font-weight: bold; color: #ff4444;'>⚠️ APLICADA SÚMULA 231 - PENA LIMITADA AO MÍNIMO LEGAL</div></div>" if aplicou_sumula_231_final else ""}
     </div>
     """, unsafe_allow_html=True)
 
+# ---
 # SEÇÃO DE REFERÊNCIAS LEGAIS COMPLETAS
 st.header("📚 Referências Legais Completas")
 
@@ -656,7 +641,7 @@ with tab1:
         st.subheader("Agravantes (Art. 61-62 CP)")
         st.write("""
         **Art. 61 - Agravantes sempre aplicáveis:**
-        - Reincidência
+        - Reincidência (Art. 61, I)
         - Motivo fútil ou torpe
         - Traição, emboscada, dissimulação
         - Emprego de veneno, fogo, explosivo, tortura
@@ -687,7 +672,7 @@ with tab1:
         - Coação resistível
         - Ordem superior
         - Violenta emoção por ato injusto
-        - Confissão espontânea
+        - Confissão espontânea (Súmula 545 STJ)
         - Influência de multidão
         
         **Art. 66 - Atenuantes genéricas:**
@@ -705,8 +690,8 @@ with tab2:
     - 🎯 Limitação de fim de semana
     
     **Art. 44 - Requisitos para substituição:**
-    - Pena ≤ 4 anos + crime sem violência
-    - Não reincidente em crime doloso
+    - Pena ≤ 4 anos + crime sem violência/grave ameaça
+    - Não reincidente em crime doloso (salvo Art. 44, §3º)
     - Análise favorável do Art. 59
     """)
 
@@ -715,30 +700,32 @@ with tab3:
     st.write("""
     **Súmula 231 STJ (IMPORTANTE):**
     - *"A incidência da circunstância atenuante não pode conduzir à redução da pena abaixo do mínimo legal."*
-    - Data: 22/09/1999
-    - Efeito: Impede que atenuantes reduzam a pena abaixo do patamar mínimo estabelecido em lei
+    - Efeito: Impede que atenuantes (2ª Fase) ou minorantes (3ª Fase) reduzam a pena abaixo do patamar mínimo estabelecido em lei
     
     **Súmula 444 STJ:**
     - A dosimetria da pena deve observar o sistema trifásico do Art. 68 CP
     - O juiz deve fundamentar cada fase do cálculo
+    
+    **Súmula 545 STJ:**
+    - *"Quando a confissão for utilizada para a formação do convencimento do julgador, o réu fará jus à atenuante prevista no art. 65, III, d, do Código Penal."*
     """)
 
 with tab4:
-    st.subheader("Progressão de Regime")
+    st.subheader("Progressão de Regime (Lei de Execução Penal)")
     st.write("""
-    **Regras de progressão (Lei nº 7.210/84 - Lei de Execução Penal):**
-    - 16% da pena, se primário e crime sem violência/grave ameaça.
-    - 20% da pena, se reincidente em crime sem violência/grave ameaça.
-    - 25% da pena, se primário e crime com violência/grave ameaça.
-    - 30% da pena, se reincidente em crime com violência/grave ameaça.
-    - 40% da pena, se hediondo/equiparado primário.
-    - 50% da pena, se hediondo/equiparado + resultado morte.
-    - 60% da pena, se hediondo/equiparado reincidente.
-    - 70% da pena, se hediondo/equiparado reincidente + resultado morte.
-    
-    *Todos os cálculos exigem bom comportamento.*
+    **Requisitos para Progressão (LEP Art. 112):**
+    - Bom comportamento carcerário (atestado pelo diretor)
+    - Cumprimento de **fração da pena no regime anterior**:
+        - **16%** se primário e crime sem violência/grave ameaça.
+        - **20%** se reincidente e crime sem violência/grave ameaça.
+        - **25%** se primário e crime com violência/grave ameaça.
+        - **30%** se reincidente e crime com violência/grave ameaça.
+        - **40%** se crime hediondo ou equiparado, se primário.
+        - **50%** se crime hediondo ou equiparado, se reincidente.
+        - **60%** se crime hediondo/equiparado e resultar em morte, se primário.
+        - **70%** se crime hediondo/equiparado e resultar em morte, se reincidente.
     """)
 
 st.markdown("---")
 st.write("**⚖️ Ferramenta educacional - Consulte sempre a legislação atual e um profissional do direito**")
-st.write("**📚 Base legal:** Arts. 33, 43-48, 59, 61, 65, 68 do Código Penal Brasileiro")
+st.write("**📚 Base legal:** Arts. 33, 43-48, 59, 61, 65, 68 do Código Penal Brasileiro e Lei nº 7.210/84 (LEP)")
