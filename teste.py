@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -9,7 +10,7 @@ st.title("⚖️ Simulador de Dosimetria da Pena (Versão 2.0) ⚖️")
 st.write("**Calculadora completa da dosimetria penal conforme Art. 68 do CP**")
 
 # --- Constante para a URL do arquivo CSV ---
-CSV_URL = f'https://raw.githubusercontent.com/matheusasharosilva-debug/Dosimetria-penal2/refs/heads/main/crimes_cp_final_sem_art68.csv?nocache={int(time.time())}'
+CSV_URL = 'https://gist.githubusercontent.com/aninhaaluluu/948f509c1ef9a4bb3f2128ed4f51fe60/raw/33cf2e2b33fa54807617c398c385624f5af6ad20/gistfile1.txt'
 # ------------------------------------------
 
 @st.cache_data
@@ -19,11 +20,12 @@ def processar_dados_crimes(df):
     e trata erros de tipo de dados.
     """
     if df.empty:
-        return {}
+        return {}, 0, 0
         
     crimes_dict = {}
     processados = 0
     pulados = 0
+    art206_debug = []
     
     for idx, row in df.iterrows():
         
@@ -32,6 +34,18 @@ def processar_dados_crimes(df):
         artigo_completo = row.get('Artigo_Completo', '') if pd.notna(row.get('Artigo_Completo')) else artigo_base
         descricao = row.get('Descricao_Crime', '') if pd.notna(row.get('Descricao_Crime')) else ''
         tipo_penal = row.get('Tipo_Penal_Estrutural', 'Crime Base (Caput)') if pd.notna(row.get('Tipo_Penal_Estrutural')) else 'Crime Base (Caput)'
+        
+        # 🔥 DEBUG ESPECIAL PARA ART. 206
+        if '206' in str(artigo_completo) or '206' in str(artigo_base):
+            art206_debug.append({
+                'linha': idx,
+                'artigo_completo': artigo_completo,
+                'artigo_base': artigo_base,
+                'pena_min': row.get('Pena_Minima_Valor'),
+                'pena_max': row.get('Pena_Maxima_Valor'),
+                'unid_min': row.get('Pena_Minima_Unidade'),
+                'unid_max': row.get('Pena_Maxima_Unidade')
+            })
         
         # 2. TRATAMENTO DE VALORES NUMÉRICOS E UNIDADES
         try:
@@ -105,7 +119,7 @@ def processar_dados_crimes(df):
         else:
             pulados += 1
     
-    return crimes_dict, processados, pulados
+    return crimes_dict, processados, pulados, art206_debug
 
 # --- Carregar dados DIRETAMENTE DA URL ---
 df = pd.DataFrame()
@@ -113,6 +127,7 @@ crimes_data = {}
 carregamento_sucesso = False
 total_processados = 0
 total_pulados = 0
+debug_206 = []
 
 try:
     codificacoes = ['utf-8', 'latin-1', 'iso-8859-1', 'cp1252', 'utf-8-sig']
@@ -127,7 +142,7 @@ try:
             continue
     
     if carregamento_sucesso:
-        crimes_data, total_processados, total_pulados = processar_dados_crimes(df)
+        crimes_data, total_processados, total_pulados, debug_206 = processar_dados_crimes(df)
         if not crimes_data:
             st.error("❌ Os dados foram carregados, mas não foi possível processar nenhum crime.")
             carregamento_sucesso = False
@@ -142,6 +157,19 @@ st.sidebar.write("**Base Legal:** Art. 68 do Código Penal")
 st.sidebar.write(f"**📊 Total de linhas no CSV:** {len(df) if not df.empty else 0}")
 st.sidebar.write(f"**✅ Crimes processados:** {total_processados}")
 st.sidebar.write(f"**⏭️ Crimes pulados:** {total_pulados}")
+
+# 🔥 DEBUG DO ART. 206
+if debug_206:
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### 🔍 DEBUG: Art. 206 Encontrado!")
+    for info in debug_206:
+        st.sidebar.write(f"**Linha {info['linha']}:**")
+        st.sidebar.write(f"- Artigo: {info['artigo_completo']}")
+        st.sidebar.write(f"- Pena Min: {info['pena_min']} {info['unid_min']}")
+        st.sidebar.write(f"- Pena Max: {info['pena_max']} {info['unid_max']}")
+        st.sidebar.write("---")
+else:
+    st.sidebar.warning("⚠️ Art. 206 NÃO encontrado no CSV!")
 
 if st.sidebar.button("🔄 Forçar Atualização"):
     st.cache_data.clear()
