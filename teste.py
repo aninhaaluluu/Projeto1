@@ -187,7 +187,6 @@ with col2:
     st.write(f"**Ajuste (Circunstâncias {circunstancia}/8):** +{ajuste_circunstancia:.1f} anos")
     st.success(f"**PENA BASE FINAL: {pena_base_ajustada:.1f} anos**")
 
----
 ## 2️⃣ Fase 2: Atenuantes e Agravantes Gerais (Pena Provisória)
 # ------------------------------------------------------------------
 
