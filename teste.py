@@ -9,9 +9,7 @@ st.set_page_config(layout="wide")
 st.title("⚖️ Simulador de Dosimetria da Pena (Versão 2.0) ⚖️")
 st.write("**Calculadora completa da dosimetria penal conforme Art. 68 do CP**")
 
-# --- Constante para a URL do arquivo CSV ---
 CSV_URL = 'https://gist.githubusercontent.com/aninhaaluluu/948f509c1ef9a4bb3f2128ed4f51fe60/raw/33cf2e2b33fa54807617c398c385624f5af6ad20/gistfile1.txt'
-# ------------------------------------------
 
 @st.cache_data
 def processar_dados_crimes(df):
@@ -29,13 +27,11 @@ def processar_dados_crimes(df):
     
     for idx, row in df.iterrows():
         
-        # 1. DEFINIÇÃO DAS VARIÁVEIS DE TEXTO
         artigo_base = row.get('Artigo_Base', '') if pd.notna(row.get('Artigo_Base')) else ''
         artigo_completo = row.get('Artigo_Completo', '') if pd.notna(row.get('Artigo_Completo')) else artigo_base
         descricao = row.get('Descricao_Crime', '') if pd.notna(row.get('Descricao_Crime')) else ''
         tipo_penal = row.get('Tipo_Penal_Estrutural', 'Crime Base (Caput)') if pd.notna(row.get('Tipo_Penal_Estrutural')) else 'Crime Base (Caput)'
         
-        # 🔥 DEBUG ESPECIAL PARA ART. 206
         if '206' in str(artigo_completo) or '206' in str(artigo_base):
             art206_debug.append({
                 'linha': idx,
@@ -47,26 +43,21 @@ def processar_dados_crimes(df):
                 'unid_max': row.get('Pena_Maxima_Unidade')
             })
         
-        # 2. TRATAMENTO DE VALORES NUMÉRICOS E UNIDADES
         try:
             pena_min_valor_raw = row.get('Pena_Minima_Valor')
             pena_max_valor_raw = row.get('Pena_Maxima_Valor')
             
-            # Verifica se AMBOS os valores são válidos
             if pd.isna(pena_min_valor_raw) or pd.isna(pena_max_valor_raw):
                 pulados += 1
                 continue
             
-            # Converte para float
             pena_min_valor = float(pena_min_valor_raw)
             pena_max_valor = float(pena_max_valor_raw)
             
-            # Se os valores são zero ou negativos, pula
             if pena_min_valor <= 0 or pena_max_valor <= 0:
                 pulados += 1
                 continue
             
-            # Obtém as unidades
             pena_min_unidade_raw = row.get('Pena_Minima_Unidade', 'mês')
             pena_max_unidade_raw = row.get('Pena_Maxima_Unidade', 'mês')
             
@@ -82,7 +73,6 @@ def processar_dados_crimes(df):
             pulados += 1
             continue
 
-        # 3. CONVERSÃO PARA ANOS
         def converter_para_anos(valor, unidade):
             unidade_limpa = unidade.replace('ê', 'e').strip()
             if 'mes' in unidade_limpa or 'mês' in unidade:
@@ -98,7 +88,6 @@ def processar_dados_crimes(df):
         if pena_min_anos > pena_max_anos:
             pena_min_anos, pena_max_anos = pena_max_anos, pena_min_anos
             
-        # 4. CRIAÇÃO DA CHAVE E DADOS
         if artigo_completo and descricao and pena_min_anos > 0 and pena_max_anos > 0:
             chave = f"Art. {artigo_completo} - {descricao[:80]}{'...' if len(descricao) > 80 else ''}"
             
@@ -121,7 +110,6 @@ def processar_dados_crimes(df):
     
     return crimes_dict, processados, pulados, art206_debug
 
-# --- Carregar dados DIRETAMENTE DA URL ---
 df = pd.DataFrame()
 crimes_data = {}
 carregamento_sucesso = False
@@ -151,14 +139,12 @@ except Exception as e:
     st.error(f"❌ Erro ao carregar arquivo da URL: {e}")
     carregamento_sucesso = False
 
-# --- Sidebar (SÓ DEPOIS DE CARREGAR) ---
 st.sidebar.header("💡 Sobre")
 st.sidebar.write("**Base Legal:** Art. 68 do Código Penal")
 st.sidebar.write(f"**📊 Total de linhas no CSV:** {len(df) if not df.empty else 0}")
 st.sidebar.write(f"**✅ Crimes processados:** {total_processados}")
 st.sidebar.write(f"**⏭️ Crimes pulados:** {total_pulados}")
 
-# 🔥 DEBUG DO ART. 206
 if debug_206:
     st.sidebar.markdown("---")
     st.sidebar.markdown("### 🔍 DEBUG: Art. 206 Encontrado!")
@@ -175,7 +161,6 @@ if st.sidebar.button("🔄 Forçar Atualização"):
     st.cache_data.clear()
     st.rerun()
 
-# Busca na sidebar
 st.sidebar.write("**🔍 Buscar crime:**")
 busca = st.sidebar.text_input("Digite o artigo ou descrição:")
 
@@ -186,14 +171,9 @@ if busca and crimes_data:
         crime_info = crimes_filtrados[chave]
         st.sidebar.write(f"**{crime_info['artigo']}** - Pena: {crime_info['pena_min']:.1f}-{crime_info['pena_max']:.1f} anos")
 
-# Se não há dados, para aqui
 if not crimes_data or not carregamento_sucesso:
     st.warning("⚠️ Aguardando carregamento do dataset...")
     st.stop()
-
-# ------------------------------------------------------------------
-## 1️⃣ Fase 1: Pena Base
-# ------------------------------------------------------------------
 
 st.header("1️⃣ Fase 1: Pena Base e Circunstâncias (Art. 59 CP)")
 col1, col2 = st.columns([2, 1])
@@ -244,7 +224,6 @@ with col2:
         "Crime contra criança/idoso", "Embriaguez preordenada"
     ])
 
-## 3️⃣ Fase 3
 st.header("3️⃣ Fase 3: Majorantes e Minorantes")
 col1, col2 = st.columns(2)
 
@@ -262,7 +241,6 @@ with col2:
         "Tentativa", "Participação de menor importância"
     ])
 
-## 4️⃣ Cálculo
 st.header("4️⃣ Cálculo Final")
 
 if st.button("🎯 Calcular Pena Definitiva", type="primary"):
@@ -270,7 +248,6 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
     pena_provisoria = pena_base_ajustada
     calculo = f"| Etapa | Valor | Ajuste |\n|---|---|---|\n| Pena Base | {pena_base_ajustada:.1f} anos | - |\n"
     
-    # Atenuantes
     ajuste_2fase = pena_base_ajustada * (1/6)
     ajustes_aten = []
     for i, _ in enumerate(atenuantes, 1):
@@ -285,14 +262,12 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
                 ajustes_aten.append(red)
                 calculo += f"| Atenuante {i} | {min_pena:.1f} anos | -{red:.1f} (Súmula 231) |\n"
     
-    # Agravantes
     ajustes_agra = []
     for i, _ in enumerate(agravantes, 1):
         pena_provisoria += ajuste_2fase
         ajustes_agra.append(ajuste_2fase)
         calculo += f"| Agravante {i} | {pena_provisoria:.1f} anos | +{ajuste_2fase:.1f} |\n"
     
-    # Majorantes
     ajuste_3fase = pena_base_ajustada * (1/4)
     pena_definitiva = pena_provisoria
     ajustes_maj = []
@@ -301,7 +276,6 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
         ajustes_maj.append(ajuste_3fase)
         calculo += f"| Majorante {i} | {pena_definitiva:.1f} anos | +{ajuste_3fase:.1f} |\n"
     
-    # Minorantes
     ajustes_min = []
     for i, _ in enumerate(minorantes, 1):
         if (pena_definitiva - ajuste_3fase) >= min_pena:
@@ -320,7 +294,6 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
     
     st.markdown(calculo)
     
-    # Regime
     st.header("5️⃣ Regime de Cumprimento")
     reincidente = "Reincidência" in agravantes
     
@@ -341,7 +314,6 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
     </div>
     """, unsafe_allow_html=True)
     
-    # Substituição
     st.header("6️⃣ Substituição por PRD")
     pode_substituir = pena_final <= 4 and not reincidente
     cor_subst = "#44cc44" if pode_substituir else "#ff4444"
@@ -353,7 +325,6 @@ if st.button("🎯 Calcular Pena Definitiva", type="primary"):
     </div>
     """, unsafe_allow_html=True)
     
-    # Gráfico
     st.header("📊 Visualização")
     fig = go.Figure(go.Waterfall(
         x=["Mín Legal", "Circunst.", "Atenuantes", "Agravantes", "Minorantes", "Majorantes", "Final"],
