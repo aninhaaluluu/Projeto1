@@ -9,6 +9,9 @@ st.write("**Calculadora completa da dosimetria penal conforme Art. 68 do CP**")
 
 # --- Constante para a URL do arquivo CSV ---
 CSV_URL = 'https://raw.githubusercontent.com/matheusasharosilva-debug/Dosimetria-penal2/refs/heads/main/crimes_cp_final_sem_art68.csv'
+df = pd.read_csv(CSV_URL, sep=";", dtype=str, keep_default_na=False)
+df = df.fillna("")
+df["pena"] = df["pena"].str.strip()
 # ------------------------------------------
 
 @st.cache_data
