@@ -262,7 +262,6 @@ with col2:
         "Causa de diminuição de culpabilidade (ex: 1/3 a 2/3)"
     ])
 
----
 ## 4️⃣ Fase 4: Cálculo Final da Pena (Sistema Trifásico)
 # ------------------------------------------------------------------
 
