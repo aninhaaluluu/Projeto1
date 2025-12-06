@@ -236,7 +236,6 @@ with col2:
         "Execução mediante paga ou promessa de recompensa (Art. 62)"
     ])
 
----
 ## 3️⃣ Fase 3: Causas de Aumento/Diminuição
 # ------------------------------------------------------------------
 
