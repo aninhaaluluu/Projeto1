@@ -1,0 +1,186 @@
+Artigo_Base,Artigo_Completo,Tipo_Pena,Descricao_Crime,Pena_Minima_Valor,Pena_Minima_Unidade,Pena_Maxima_Valor,Pena_Maxima_Unidade,Tipo_Penal_Estrutural,Tipo_Pena_Antigo
+Art. 121,Art. 121,Outras Penas/N/A,Art. 121. Matar alguem:,72.0,mês,240.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 121,"Art. 121, V -",Outras Penas/N/A,"V - para assegurar a execução, a ocultação, a impunidade ou vantagem de outro crime:",144.0,mês,360.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 121,"N/A, X -",Outras Penas/N/A,"X - nas dependências de instituição de ensino:     (Incluído pela Lei nº 15.159, de 2025)",144.0,mês,360.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 121,"N/A, § 3",Outras Penas/N/A,"§ 3º Se o homicídio é culposo: (Vide Lei nº 4.611, de 1965)",12.0,mês,36.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 122,Art. 122,Outras Penas/N/A,"Art. 122. Induzir ou instigar alguém a suicidar-se ou a praticar automutilação ou prestar-lhe auxílio material para que o faça:   (Redação dada pela Lei nº 13.968, de 2019)",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 122,art. 129,Outras Penas/N/A,"art. 129 deste Código:   (Incluído pela Lei nº 13.968, de 2019)",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 122,"Art. 122, § 2",Outras Penas/N/A,"§ 2º Se o suicídio se consuma ou se da automutilação resulta morte:    (Incluído pela Lei nº 13.968, de 2019)",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 123,Art. 123,Outras Penas/N/A,"Art. 123 - Matar, sob a influência do estado puerperal, o próprio filho, durante o parto ou logo após:",24.0,mês,72.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 124,Art. 124,Outras Penas/N/A,Art. 124 - Provocar aborto em si mesma ou consentir que outrem lho provoque:  (Vide ADPF 54),12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 125,Art. 125,Outras Penas/N/A,"Art. 125 - Provocar aborto, sem o consentimento da gestante:",36.0,mês,120.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 126,Art. 126,Outras Penas/N/A,Art. 126 - Provocar aborto com o consentimento da gestante:   (Vide ADPF 54),12.0,mês,48.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 129,Art. 129,Outras Penas/N/A,Art. 129. Ofender a integridade corporal ou a saúde de outrem:,,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 128,"Art. 128, IV -",Outras Penas/N/A,IV - aceleração de parto:,12.0,mês,60.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 129,"Art. 129, V -",Outras Penas/N/A,V - aborto:,24.0,mês,96.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 129,"Art. 129, § 3",Outras Penas/N/A,"§ 3° Se resulta morte e as circunstâncias evidenciam que o agente não quís o resultado, nem assumiu o risco de produzí-lo:",48.0,mês,144.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 129,"N/A, § 6",Outras Penas/N/A,"§ 6° Se a lesão é culposa: (Vide Lei nº 4.611, de 1965)",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 130,Art. 130,Outras Penas/N/A,"Art. 130 - Expor alguém, por meio de relações sexuais ou qualquer ato libidinoso, a contágio de moléstia venérea, de que sabe ou deve saber que está contaminado:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 130,"Art. 130, § 1",Outras Penas/N/A,§ 1º - Se é intenção do agente transmitir a moléstia:,12.0,mês,48.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 131,Art. 131,Outras Penas/N/A,"Art. 131 - Praticar, com o fim de transmitir a outrem moléstia grave de que está contaminado, ato capaz de produzir o contágio:",12.0,mês,48.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 132,Art. 132,Outras Penas/N/A,Art. 132 - Expor a vida ou a saúde de outrem a perigo direto e iminente:,,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 133,Art. 133,Outras Penas/N/A,"Art. 133 - Abandonar pessoa que está sob seu cuidado, guarda, vigilância ou autoridade, e, por qualquer motivo, incapaz de defender-se dos riscos resultantes do abandono:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 132,"Art. 132, § 1",Outras Penas/N/A,§ 1º - Se do abandono resulta lesão corporal de natureza grave:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 132,"Art. 132, § 2",Outras Penas/N/A,§ 2º - Se resulta a morte:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 134,Art. 134,Outras Penas/N/A,"Art. 134 - Expor ou abandonar recém-nascido, para ocultar desonra própria:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 134,"Art. 134, § 1",Outras Penas/N/A,§ 1º - Se do fato resulta lesão corporal de natureza grave:,12.0,mês,36.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 134,"Art. 134, § 2",Outras Penas/N/A,§ 2º - Se resulta a morte:,24.0,mês,72.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 136,"Art. 136, § 1",Outras Penas/N/A,§ 1º - Se do fato resulta lesão corporal de natureza grave:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 136,"Art. 136, § 2",Outras Penas/N/A,§ 2º - Se resulta a morte:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 137,Art. 137,Outras Penas/N/A,"Art. 137 - Participar de rixa, salvo para separar os contendores:",0.5,mês,0.5,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 138,Art. 138,Outras Penas/N/A,"Art. 138 - Caluniar alguém, imputando-lhe falsamente fato definido como crime:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 139,Art. 139,Outras Penas/N/A,"Art. 139 - Difamar alguém, imputando-lhe fato ofensivo à sua reputação:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 140,Art. 140,Outras Penas/N/A,"Art. 140 - Injuriar alguém, ofendendo-lhe a dignidade ou o decoro:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 139,"Art. 139, § 2",Outras Penas/N/A,"§ 2º - Se a injúria consiste em violência ou vias de fato, que, por sua natureza ou pelo meio empregado, se considerem aviltantes:",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 140,"Art. 140, § 3",Outras Penas/N/A,"§ 3º Se a injúria consiste na utilização de elementos referentes a religião ou à condição de pessoa idosa ou com deficiência:        (Redação dada pela Lei nº 14.532, de 2023)",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 147,Art. 147,Outras Penas/N/A,"Art. 147 - Ameaçar alguém, por palavra, escrito ou gesto, ou qualquer outro meio simbólico, de causar-lhe mal injusto e grave:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 148,Art. 148,Outras Penas/N/A,"Art. 148 - Privar alguém de sua liberdade, mediante seqüestro ou cárcere privado:         (Vide Lei nº 10.446, de 2002)",12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 148,"Art. 148, § 2",Detenção,"§ 2º - Se resulta à vítima, em razão de maus-tratos ou da natureza da detenção, grave sofrimento físico ou moral:",24.0,mês,96.0,mês,Crime Qualificado/Autônomo,Detenção
+Art. 149,"Art. 149, V -",Outras Penas/N/A,"V - exploração sexual.               (Incluído pela Lei nº 13.344, de 2016)          (Vigência)",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 150,Art. 150,Outras Penas/N/A,"Art. 150 - Entrar ou permanecer, clandestina ou astuciosamente, ou contra a vontade expressa ou tácita de quem de direito, em casa alheia ou em suas dependências:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 150,"Art. 150, § 1",Outras Penas/N/A,"§ 1º - Se o crime é cometido durante a noite, ou em lugar ermo, ou com o emprego de violência ou de arma, ou por duas ou mais pessoas:",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 151,Art. 151,Outras Penas/N/A,"Art. 151 - Devassar indevidamente o conteúdo de correspondência fechada, dirigida a outrem:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 154,Art. 154,Outras Penas/N/A,"Art. 154 - Revelar alguém, sem justa causa, segredo, de que tem ciência em razão de função, ministério, ofício ou profissão, e cuja revelação possa produzir dano a outrem:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 155,Art. 155,Outras Penas/N/A,"Art. 155 - Subtrair, para si ou para outrem, coisa alheia móvel:",12.0,mês,48.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 156,Art. 156,Outras Penas/N/A,"Art. 156 - Subtrair o condômino, co-herdeiro ou sócio, para si ou para outrem, a quem legitimamente a detém, a coisa comum:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 159,"Art. 159, § 2",Outras Penas/N/A,"§ 2º - Se do fato resulta lesão corporal de natureza grave:               Vide Lei nº 8.072, de 25.7.90",192.0,mês,288.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 160,Art. 160,Outras Penas/N/A,"Art. 160 - Exigir ou receber, como garantia de dívida, abusando da situação de alguém, documento que pode dar causa a procedimento criminal contra a vítima ou contra terceiro:",12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 161,Art. 161,Outras Penas/N/A,"Art. 161 - Suprimir ou deslocar tapume, marco, ou qualquer outro sinal indicativo de linha divisória, para apropriar-se, no todo ou em parte, de coisa imóvel alheia:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 162,Art. 162,Outras Penas/N/A,"Art. 162 - Suprimir ou alterar, indevidamente, em gado ou rebanho alheio, marca ou sinal indicativo de propriedade:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 163,Art. 163,Outras Penas/N/A,"Art. 163 - Destruir, inutilizar ou deteriorar coisa alheia:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 162,"Art. 162, IV -",Outras Penas/N/A,IV - por motivo egoístico ou com prejuízo considerável para a vítima:,,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 164,Art. 164,Outras Penas/N/A,"Art. 164 - Introduzir ou deixar animais em propriedade alheia, sem consentimento de quem de direito, desde que o fato resulte prejuízo:",0.5,mês,0.5,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 165,Art. 165,Outras Penas/N/A,"Art. 165 - Destruir, inutilizar ou deteriorar coisa tombada pela autoridade competente em virtude de valor artístico, arqueológico ou histórico:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 166,Art. 166,Outras Penas/N/A,"Art. 166 - Alterar, sem licença da autoridade competente, o aspecto de local especialmente protegido por lei:",12.0,mês,48.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 169,Art. 169,Outras Penas/N/A,"Art. 169 - Apropriar-se alguém de coisa alheia vinda ao seu poder por erro, caso fortuito ou força da natureza:",0.5,mês,0.5,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 171,Art. 171,Outras Penas/N/A,"Art. 171 - Obter, para si ou para outrem, vantagem ilícita, em prejuízo alheio, induzindo ou mantendo alguém em erro, mediante artifício, ardil, ou qualquer outro meio fraudulento:",12.0,mês,60.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 173,"Art. 173, II -",Outras Penas/N/A,II - entregando uma mercadoria por outra:,,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 176,Art. 176,Outras Penas/N/A,"Art. 176 - Tomar refeição em restaurante, alojar-se em hotel ou utilizar-se de meio de transporte sem dispor de recursos para efetuar o pagamento:",0.5,mês,0.5,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 178,Art. 178,Outras Penas/N/A,"Art. 178 - Emitir conhecimento de depósito ou warrant, em desacordo com disposição legal:",12.0,mês,48.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 179,Art. 179,Outras Penas/N/A,"Art. 179 - Fraudar execução, alienando, desviando, destruindo ou danificando bens, ou simulando dívidas:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 192,"Art. 192, I -",Outras Penas/N/A,"I - a exercer ou não exercer arte, ofício, profissão ou indústria, ou a trabalhar ou não trabalhar durante certo período ou em determinados dias:",,,,,Crime Base (Caput),Pena Privativa de Liberdade (Tipo Indefinido)
+Art. 203,Art. 203,Outras Penas/N/A,"Art. 203 - Frustrar, mediante fraude ou violência, direito assegurado pela legislação do trabalho:",12.0,mês,24.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 204,Art. 204,Outras Penas/N/A,"Art. 204 - Frustrar, mediante fraude ou violência, obrigação legal relativa à nacionalização do trabalho:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 206,Art. 206,Outras Penas/N/A,"Art. 206 - Recrutar trabalhadores, mediante fraude, com o fim de levá-los para território estrangeiro. (Redação dada pela Lei nº 8.683, de 1993)",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 207,Art. 207,Outras Penas/N/A,"Art. 207 - Aliciar trabalhadores, com o fim de levá-los de uma para outra localidade do território nacional:",12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 211,Art. 211,Outras Penas/N/A,"Art. 211 - Destruir, subtrair ou ocultar cadáver ou parte dele:",12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 212,Art. 212,Outras Penas/N/A,Art. 212 - Vilipendiar cadáver ou suas cinzas:,12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 211,"Art. 211, § 1",Outras Penas/N/A,"§ 1o  Se da conduta resulta lesão corporal de natureza grave ou se a vítima é menor de 18 (dezoito) ou maior de 14 (catorze) anos:           (Incluído pela Lei nº 12.015, de 2009)",,,,,Crime Qualificado/Autônomo,Pena Privativa de Liberdade (Tipo Indefinido)
+Art. 212,"Art. 212, § 2",Outras Penas/N/A,"§ 2o  Se da conduta resulta morte:             (Incluído pela Lei nº 12.015, de 2009)",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 215,Art. 215,Outras Penas/N/A,"Art. 215-A. Praticar contra alguém e sem a sua anuência ato libidinoso com o objetivo de satisfazer a própria lascívia ou a de terceiro:  (Incluído pela Lei nº 13.718, de 2018)",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 217,Art. 217,Outras Penas/N/A,"Art. 217-A.  Ter conjunção carnal ou praticar outro ato libidinoso com menor de 14 (catorze) anos:               (Incluído pela Lei nº 12.015, de 2009)",,,,,Crime Base (Caput),Pena Privativa de Liberdade (Tipo Indefinido)
+Art. 217,"Art. 217, § 3",Outras Penas/N/A,"§ 3o  Se da conduta resulta lesão corporal de natureza grave:            (Incluído pela Lei nº 12.015, de 2009)",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 217,"Art. 217, § 4",Outras Penas/N/A,"§ 4o  Se da conduta resulta morte:              (Incluído pela Lei nº 12.015, de 2009)",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 218,Art. 218,Outras Penas/N/A,"Art. 218.  Induzir alguém menor de 14 (catorze) anos a satisfazer a lascívia de outrem:           (Redação dada pela Lei nº 12.015, de 2009)",,,,,Crime Base (Caput),Pena Privativa de Liberdade (Tipo Indefinido)
+Art. 218,i-,Outras Penas/N/A,"i-lo a presenciar, conjunção carnal ou outro ato libidinoso, a fim de satisfazer lascívia própria ou de outrem:          (Incluído pela Lei nº 12.015, de 2009)",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 227,Art. 227,Outras Penas/N/A,Art. 227 - Induzir alguém a satisfazer a lascívia de outrem:,12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 227,"Art. 227, § 2",Outras Penas/N/A,"§ 2º - Se o crime é cometido com emprego de violência, grave ameaça ou fraude:",24.0,mês,96.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 228,"Art. 228, § 2",Outras Penas/N/A,"§ 2º - Se o crime, é cometido com emprego de violência, grave ameaça ou fraude:",48.0,mês,120.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 230,Art. 230,Outras Penas/N/A,"Art. 230 - Tirar proveito da prostituição alheia, participando diretamente de seus lucros ou fazendo-se sustentar, no todo ou em parte, por quem a exerça:",12.0,mês,48.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 233,Art. 233,Outras Penas/N/A,"Art. 233 - Praticar ato obsceno em lugar público, ou aberto ou exposto ao público:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 235,Art. 235,Outras Penas/N/A,"Art. 235 - Contrair alguém, sendo casado, novo casamento:",24.0,mês,72.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 236,Art. 236,Outras Penas/N/A,"Art. 236 - Contrair casamento, induzindo em erro essencial o outro contraente, ou ocultando-lhe impedimento que não seja casamento anterior:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 237,Art. 237,Outras Penas/N/A,"Art. 237 - Contrair casamento, conhecendo a existência de impedimento que lhe cause a nulidade absoluta:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 238,Art. 238,Outras Penas/N/A,Art. 238 - Atribuir-se falsamente autoridade para celebração de casamento:,12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 239,Art. 239,Outras Penas/N/A,Art. 239 - Simular casamento mediante engano de outra pessoa:,12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 241,Art. 241,Outras Penas/N/A,Art. 241 - Promover no registro civil a inscrição de nascimento inexistente:,24.0,mês,72.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 240,"Art. 240, Parágrafo único",Outras Penas/N/A,"Parágrafo único - Se o crime é praticado por motivo de reconhecida nobreza: (Redação dada pela Lei nº 6.898, de 1981)",12.0,mês,24.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 246,Art. 246,Outras Penas/N/A,"Art. 246 - Deixar, sem justa causa, de prover à instrução primária de filho em idade escolar:",0.5,mês,0.5,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 246,"Art. 246, IV -",Outras Penas/N/A,IV - mendigue ou sirva a mendigo para excitar a comiseração pública:,,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 249,Art. 249,Outras Penas/N/A,Art. 249 - Subtrair menor de dezoito anos ou interdito ao poder de quem o tem sob sua guarda em virtude de lei ou de ordem judicial:,,,,,Crime Base (Caput),Pena Privativa de Liberdade (Tipo Indefinido)
+Art. 250,Art. 250,Outras Penas/N/A,"Art. 250 - Causar incêndio, expondo a perigo a vida, a integridade física ou o patrimônio de outrem:",36.0,mês,72.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 251,"Art. 251, § 1",Outras Penas/N/A,§ 1º - Se a substância utilizada não é dinamite ou explosivo de efeitos análogos:,12.0,mês,48.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 252,Art. 252,Outras Penas/N/A,"Art. 252 - Expor a perigo a vida, a integridade física ou o patrimônio de outrem, usando de gás tóxico ou asfixiante:",12.0,mês,48.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 252,"Art. 252, Parágrafo único",Outras Penas/N/A,Parágrafo único - Se o crime é culposo:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 253,Art. 253,Outras Penas/N/A,"Art. 253 - Fabricar, fornecer, adquirir, possuir ou transportar, sem licença da autoridade, substância ou engenho explosivo, gás tóxico ou asfixiante, ou material destinado à sua fabricação:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 254,Art. 254,Outras Penas/N/A,"Art. 254 - Causar inundação, expondo a perigo a vida, a integridade física ou o patrimônio de outrem:",36.0,mês,72.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 256,Art. 256,Outras Penas/N/A,"Art. 256 - Causar desabamento ou desmoronamento, expondo a perigo a vida, a integridade física ou o patrimônio de outrem:",12.0,mês,48.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 254,"Art. 254, Parágrafo único",Outras Penas/N/A,Parágrafo único - Se o crime é culposo:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 259,Art. 259,Outras Penas/N/A,"Art. 259 - Difundir doença ou praga que possa causar dano a floresta, plantação ou animais de utilidade econômica:",24.0,mês,60.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 259,"Art. 259, IV -",Outras Penas/N/A,IV - praticando outro ato de que possa resultar desastre:,24.0,mês,60.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 260,"Art. 260, § 1",Outras Penas/N/A,§ 1º - Se do fato resulta desastre:,48.0,mês,144.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 260,"Art. 260, § 2",Outras Penas/N/A,"§ 2º - No caso de culpa, ocorrendo desastre:",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 261,Art. 261,Outras Penas/N/A,"Art. 261 - Expor a perigo embarcação ou aeronave, própria ou alheia, ou praticar qualquer ato tendente a impedir ou dificultar navegação marítima, fluvial ou aérea:",24.0,mês,60.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 261,"Art. 261, § 1",Outras Penas/N/A,"§ 1º - Se do fato resulta naufrágio, submersão ou encalhe de embarcação ou a queda ou destruição de aeronave:",48.0,mês,144.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 261,"Art. 261, § 3",Outras Penas/N/A,"§ 3º - No caso de culpa, se ocorre o sinistro:",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 262,Art. 262,Outras Penas/N/A,"Art. 262 - Expor a perigo outro meio de transporte público, impedir-lhe ou dificultar-lhe o funcionamento:",12.0,mês,24.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 262,"Art. 262, § 2",Outras Penas/N/A,"§ 2º - No caso de culpa, se ocorre desastre:",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 264,Art. 264,Outras Penas/N/A,"Art. 264 - Arremessar projétil contra veículo, em movimento, destinado ao transporte público por terra, por água ou pelo ar:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 265,Art. 265,Outras Penas/N/A,"Art. 265 - Atentar contra a segurança ou o funcionamento de serviço de água, luz, força ou calor, ou qualquer outro de utilidade pública:",12.0,mês,60.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 266,Art. 266,Outras Penas/N/A,"Art. 266 - Interromper ou perturbar serviço telegráfico, radiotelegráfico ou telefônico, impedir ou dificultar-lhe o restabelecimento:",12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 267,Art. 267,Outras Penas/N/A,"Art. 267 - Causar epidemia, mediante a propagação de germes patogênicos:",120.0,mês,180.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 268,Art. 268,Outras Penas/N/A,"Art. 268 - Infringir determinação do poder público, destinada a impedir introdução ou propagação de doença contagiosa:",,,,,Causa de Aumento/Diminuição de Pena,Causa de Aumento/Diminuição de Pena
+Art. 270,Art. 270,Outras Penas/N/A,"Art. 270 - Envenenar água potável, de uso comum ou particular, ou substância alimentícia ou medicinal destinada a consumo:",120.0,mês,180.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 269,"Art. 269, § 2",Outras Penas/N/A,§ 2º - Se o crime é culposo:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 271,Art. 271,Outras Penas/N/A,"Art. 271 - Corromper ou poluir água potável, de uso comum ou particular, tornando-a imprópria para consumo ou nociva à saúde:",24.0,mês,60.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 270,"Art. 270, Parágrafo único",Outras Penas/N/A,Parágrafo único - Se o crime é culposo:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 272,"Art. 272, § 2",Outras Penas/N/A,"§ 2º - Se o crime é culposo: (Redação dada pela Lei nº 9.677, de 2.7.1998)",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 273,Art. 273,Outras Penas/N/A,"Art. 273 - Falsificar, corromper, adulterar ou alterar produto destinado a fins terapêuticos ou medicinais: (Redação dada pela Lei nº 9.677, de 2.7.1998)",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 273,"N/A, § 2",Outras Penas/N/A,§ 2º - Se o crime é culposo:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 276,Art. 276,Outras Penas/N/A,"Art. 276 - Vender, expor à venda, ter em depósito para vender ou, de qualquer forma, entregar a consumo produto nas condições dos arts. 274 e 275.",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 277,"Art. 277, Parágrafo único",Outras Penas/N/A,Parágrafo único - Se o crime é culposo:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 280,Art. 280,Outras Penas/N/A,Art. 280 - Fornecer substância medicinal em desacordo com receita médica:,12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 278,"Art. 278, Parágrafo único",Outras Penas/N/A,Parágrafo único - Se o crime é culposo:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 282,Art. 282,Outras Penas/N/A,"Art. 282 - Exercer, ainda que a título gratuito, a profissão de médico, dentista ou farmacêutico, sem autorização legal ou excedendo-lhe os limites:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 283,Art. 283,Outras Penas/N/A,Art. 283 - Inculcar ou anunciar cura por meio secreto ou infalível:,,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 281,"Art. 281, III -",Outras Penas/N/A,III - fazendo diagnósticos:,,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 286,Art. 286,Outras Penas/N/A,"Art. 286 - Incitar, publicamente, a prática de crime:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 287,Art. 287,Outras Penas/N/A,"Art. 287 - Fazer, publicamente, apologia de fato criminoso ou de autor de crime:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 288,Art. 288,Outras Penas/N/A,"Art. 288.  Associarem-se 3 (três) ou mais pessoas, para o fim específico de cometer crimes:     (Redação dada pela Lei nº 12.850, de 2013)     (Vigência)",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 289,Art. 289,Outras Penas/N/A,"Art. 289 - Falsificar, fabricando-a ou alterando-a, moeda metálica ou papel-moeda de curso legal no país ou no estrangeiro:",36.0,mês,144.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 293,"Art. 293, VI -",Outras Penas/N/A,"VI - bilhete, passe ou conhecimento de empresa de transporte administrada pela União, por Estado ou por Município:",24.0,mês,96.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 294,Art. 294,Outras Penas/N/A,"Art. 294 - Fabricar, adquirir, fornecer, possuir ou guardar objeto especialmente destinado à falsificação de qualquer dos papéis referidos no artigo anterior:",12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 294,"Art. 294, II -",Outras Penas/N/A,"II - selo ou sinal atribuído por lei a entidade de direito público, ou a autoridade, ou sinal público de tabelião:",24.0,mês,72.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 297,Art. 297,Outras Penas/N/A,"Art. 297 - Falsificar, no todo ou em parte, documento público, ou alterar documento público verdadeiro:",24.0,mês,72.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 298,Art. 298,Outras Penas/N/A,"Art. 298 - Falsificar, no todo ou em parte, documento particular ou alterar documento particular verdadeiro:",12.0,mês,60.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 300,Art. 300,Outras Penas/N/A,"Art. 300 - Reconhecer, como verdadeira, no exercício de função pública, firma ou letra que o não seja:",12.0,mês,60.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 302,Art. 302,Outras Penas/N/A,"Art. 302 - Dar o médico, no exercício da sua profissão, atestado falso:",12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 304,Art. 304,Outras Penas/N/A,"Art. 304 - Fazer uso de qualquer dos papéis falsificados ou alterados, a que se referem os arts. 297 a 302:",24.0,mês,72.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 307,Art. 307,Outras Penas/N/A,"Art. 307 - Atribuir-se ou atribuir a terceiro falsa identidade para obter vantagem, em proveito próprio ou alheio, ou para causar dano a outrem:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 309,Art. 309,Outras Penas/N/A,"Art. 309 - Usar o estrangeiro, para entrar ou permanecer no território nacional, nome que não é o seu:",12.0,mês,36.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 307,"Art. 307, Parágrafo único",Outras Penas/N/A,"Parágrafo único - Atribuir a estrangeiro falsa qualidade para promover-lhe a entrada em território nacional: (Incluído pela Lei nº 9.426, de 1996)",12.0,mês,48.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 311,"Art. 311, IV -",Outras Penas/N/A,IV - exame ou processo seletivo previstos em lei:    (Incluído pela Lei 12.550. de 2011),,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 311,"Art. 311, § 2",Outras Penas/N/A,§ 2o  Se da ação ou omissão resulta dano à administração pública:    (Incluído pela Lei 12.550. de 2011),,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 312,"Art. 312, § 2",Outras Penas/N/A,§ 2º - Se o funcionário concorre culposamente para o crime de outrem:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 313,Art. 313,Outras Penas/N/A,"Art. 313 - Apropriar-se de dinheiro ou qualquer utilidade que, no exercício do cargo, recebeu por erro de outrem:",12.0,mês,48.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 314,Art. 314,Outras Penas/N/A,"Art. 314 - Extraviar livro oficial ou qualquer documento, de que tem a guarda em razão do cargo; sonegá-lo ou inutilizá-lo, total ou parcialmente:",12.0,mês,48.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 315,Art. 315,Outras Penas/N/A,Art. 315 - Dar às verbas ou rendas públicas aplicação diversa da estabelecida em lei:,,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 315,"Art. 315, § 2",Outras Penas/N/A,"§ 2º - Se o funcionário desvia, em proveito próprio ou de outrem, o que recebeu indevidamente para recolher aos cofres públicos:",24.0,mês,144.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 317,"Art. 317, § 2",Outras Penas/N/A,"§ 2º - Se o funcionário pratica, deixa de praticar ou retarda ato de ofício, com infração de dever funcional, cedendo a pedido ou influência de outrem:",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 317,art. 334,Outras Penas/N/A,art. 334):,,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 321,Art. 321,Outras Penas/N/A,"Art. 321 - Patrocinar, direta ou indiretamente, interesse privado perante a administração pública, valendo-se da qualidade de funcionário:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 319,"Art. 319, Parágrafo único",Outras Penas/N/A,Parágrafo único - Se o interesse é ilegítimo:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 322,Art. 322,Outras Penas/N/A,"Art. 322 - Praticar violência, no exercício de função ou a pretexto de exercê-la:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 323,Art. 323,Outras Penas/N/A,"Art. 323 - Abandonar cargo público, fora dos casos permitidos em lei:",0.5,mês,0.5,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 321,"Art. 321, § 1",Outras Penas/N/A,§ 1º - Se do fato resulta prejuízo público:,,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 321,"Art. 321, § 2",Outras Penas/N/A,§ 2º - Se o fato ocorre em lugar compreendido na faixa de fronteira:,12.0,mês,36.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 325,Art. 325,Outras Penas/N/A,"Art. 325 - Revelar fato de que tem ciência em razão do cargo e que deva permanecer em segredo, ou facilitar-lhe a revelação:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 326,Art. 326,Outras Penas/N/A,"Art. 326 - Devassar o sigilo de proposta de concorrência pública, ou proporcionar a terceiro o ensejo de devassá-lo:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 328,Art. 328,Outras Penas/N/A,Art. 328 - Usurpar o exercício de função pública:,,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 328,"Art. 328, Parágrafo único",Outras Penas/N/A,Parágrafo único - Se do fato o agente aufere vantagem:,24.0,mês,60.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 329,Art. 329,Outras Penas/N/A,"Art. 329 - Opor-se à execução de ato legal, mediante violência ou ameaça a funcionário competente para executá-lo ou a quem lhe esteja prestando auxílio:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 328,"Art. 328, § 1",Outras Penas/N/A,"§ 1º - Se o ato, em razão da resistência, não se executa:",12.0,mês,36.0,mês,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 330,Art. 330,Outras Penas/N/A,Art. 330 - Desobedecer a ordem legal de funcionário público:,0.5,mês,0.5,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 331,Art. 331,Outras Penas/N/A,Art. 331 - Desacatar funcionário público no exercício da função ou em razão dela:,,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 334,Art. 334,Outras Penas/N/A,"Art. 334.  Iludir, no todo ou em parte, o pagamento de direito ou imposto devido pela entrada, pela saída ou pelo consumo de mercadoria (Redação dada pela Lei nº 13.008, de 26.6.2014)",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 337,Art. 337,Outras Penas/N/A,"Art. 337-E. Admitir, possibilitar ou dar causa à contratação direta fora das hipóteses previstas em lei:       (Incluído pela Lei nº 14.133, de 2021)",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 337,"Art. 337, V -",Outras Penas/N/A,"V - qualquer meio fraudulento que torne injustamente mais onerosa para a Administração Pública a proposta ou a execução do contrato:       (Incluído pela Lei nº 14.133, de 2021)",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 337,"Art. 337, § 1",Outras Penas/N/A,"§ 1º Celebrar contrato com empresa ou profissional declarado inidôneo:        (Incluído pela Lei nº 14.133, de 2021)",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
+Art. 338,Art. 338,Outras Penas/N/A,Art. 338 - Reingressar no território nacional o estrangeiro que dele foi expulso:,12.0,mês,48.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 340,Art. 340,Outras Penas/N/A,"Art. 340 - Provocar a ação de autoridade, comunicando-lhe a ocorrência de crime ou de contravenção que sabe não se ter verificado:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 341,Art. 341,Outras Penas/N/A,"Art. 341 - Acusar-se, perante a autoridade, de crime inexistente ou praticado por outrem:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 345,Art. 345,Outras Penas/N/A,"Art. 345 - Fazer justiça pelas próprias mãos, para satisfazer pretensão, embora legítima, salvo quando a lei o permite:",0.5,mês,0.5,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 346,Art. 346,Outras Penas/N/A,"Art. 346 - Tirar, suprimir, destruir ou danificar coisa própria, que se acha em poder de terceiro por determinação judicial ou convenção:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 347,Art. 347,Outras Penas/N/A,"Art. 347 - Inovar artificiosamente, na pendência de processo civil ou administrativo, o estado de lugar, de coisa ou de pessoa, com o fim de induzir a erro o juiz ou o perito:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 348,Art. 348,Reclusão,Art. 348 - Auxiliar a subtrair-se à ação de autoridade pública autor de crime a que é cominada pena de reclusão:,,,,,Crime Base (Caput),Reclusão
+Art. 346,"Art. 346, § 1",Reclusão,§ 1º - Se ao crime não é cominada pena de reclusão:,0.5,mês,0.5,mês,Crime Qualificado/Autônomo,Reclusão
+Art. 349,Art. 349,Outras Penas/N/A,"Art. 349 - Prestar a criminoso, fora dos casos de co-autoria ou de receptação, auxílio destinado a tornar seguro o proveito do crime:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 351,Art. 351,Outras Penas/N/A,Art. 351 - Promover ou facilitar a fuga de pessoa legalmente presa ou submetida a medida de segurança detentiva:,,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 352,Art. 352,Outras Penas/N/A,"Art. 352 - Evadir-se ou tentar evadir-se o preso ou o indivíduo submetido a medida de segurança detentiva, usando de violência contra a pessoa:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 353,Art. 353,Outras Penas/N/A,"Art. 353 - Arrebatar preso, a fim de maltratá-lo, do poder de quem o tenha sob custódia ou guarda:",12.0,mês,48.0,mês,Crime Base (Caput),Crime Base (Caput)
+Art. 354,Art. 354,Outras Penas/N/A,"Art. 354 - Amotinarem-se presos, perturbando a ordem ou disciplina da prisão:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 355,Art. 355,Outras Penas/N/A,"Art. 355 - Trair, na qualidade de advogado ou procurador, o dever profissional, prejudicando interesse, cujo patrocínio, em juízo, lhe é confiado:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 356,Art. 356,Outras Penas/N/A,"Art. 356 - Inutilizar, total ou parcialmente, ou deixar de restituir autos, documento ou objeto de valor probatório, que recebeu na qualidade de advogado ou procurador:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 358,Art. 358,Outras Penas/N/A,"Art. 358 - Impedir, perturbar ou fraudar arrematação judicial; afastar ou procurar afastar concorrente ou licitante, por meio de violência, grave ameaça, fraude ou oferecimento de vantagem:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 359,Art. 359,Outras Penas/N/A,"Art. 359 - Exercer função, atividade, direito, autoridade ou múnus, de que foi suspenso ou privado por decisão judicial:",,,,,Crime Base (Caput),Crime Base (Caput)
+Art. 359,"Art. 359, § 2",Outras Penas/N/A,"§ 2º Se o documento, dado ou informação é transmitido ou revelado com violação do dever de sigilo:         (Incluído pela Lei nº 14.197, de 2021)        (Vigência)",,,,,Crime Qualificado/Autônomo,Crime Qualificado/Autônomo
